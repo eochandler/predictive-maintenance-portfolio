@@ -1,0 +1,27 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Predictive Maintenance & Reliability Engineering Portfolio"
+  navbar:
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "Projects"
+        menu:
+          - text: "NASA RUL Prediction"
+            href: projects/nasa-rul.qmd
+          - text: "IoT Sensor Dashboard"
+            href: projects/pdm-dashboard.qmd
+          - text: "Cost & ROI Optimization"
+            href: projects/maintenance-roi.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+execute:
+  eval: true

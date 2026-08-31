@@ -1,0 +1,10 @@
+/* Custom Portfolio Styling */
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+}
+
+/* Callout block tweaks */
+.callout {
+  border-radius: 6px;
+}

@@ -1,0 +1,24 @@
+---
+title: "Real-Time Sensor Anomaly & Alerting Dashboard"
+subtitle: "Interactive Streamlit app monitoring IoT telemetry for predictive maintenance"
+date: "2026-08-28"
+categories: [Streamlit, Plotly, IoT, Anomaly Detection]
+---
+
+::: {.callout-note appearance="simple"}
+🚀 **Live App Available:** [Click here to launch the interactive Streamlit Dashboard](https://predictive-maintenance-portfolio-3etasqtc25xfvszhkcjr3h.streamlit.app/){target="_blank"}
+:::
+
+## Project Overview
+
+In industrial environments, predictive models cannot stay hidden in static notebooks. Maintenance engineers require **real-time visual telemetry** and **automated anomaly alerts** to prevent catastrophic equipment downtime.
+
+This project implements an interactive monitoring dashboard simulating live sensor streams from industrial assets.
+
+---
+
+## Key Features
+
+* **Live Telemetry Stream:** Simulates incoming IoT telemetry streams for air temperature, rotational speed, torque, and tool wear.
+* **Automated Threshold Alerting:** Dynamic warning banners trigger when thermal or torque operational safety limits are breached.
+* **Equipment Health Index:** Tracks continuous machine degradation on a visual gauge chart.

@@ -1,0 +1,33 @@
+---
+title: "Predictive Maintenance & Reliability Engineering Portfolio"
+subtitle: "End-to-End Machine Learning, Telemetry Monitoring & Financial Decision Systems"
+toc: true
+---
+
+## Executive Summary
+
+Welcome to my portfolio! I build end-to-end data science solutions specializing in **predictive maintenance**, **real-time operational telemetry**, and **cost-optimization frameworks**. 
+
+This portfolio demonstrates a complete industrial data science lifecycle across three core projects:
+
+1. **Failure Prediction (ML Pipeline):** Forecasting Remaining Useful Life (RUL) from multi-sensor time-series telemetry.
+2. **Operational Telemetry (Streaming UI):** Building real-time interactive dashboards with dynamic anomaly alerting.
+3. **Business Impact (Decision Engine):** Translating ML predictions into optimal financial policies that minimize total operational expenditure ($OPEX$).
+
+---
+
+## Featured Projects
+
+| Project | Domain | Key Technologies | Core Deliverable & Summary |
+|---|---|---|---|
+| **[1. NASA Turbofan RUL Forecast](projects/nasa-rul.qmd)** | Predictive Maintenance | Python, LightGBM, Pandas, Seaborn | Built a machine learning pipeline using rolling sensor features to forecast engine failure cycles on NASA C-MAPSS telemetry data. |
+| **[2. IoT Sensor Anomaly Dashboard](projects/pdm-dashboard.qmd)** | Real-Time Telemetry | Streamlit, Plotly, IoT Data Simulation | Developed a live streaming dashboard with dynamic safety-threshold alerting. Includes a **[Live Web App Demo](https://predictive-maintenance-portfolio-3etasqtc25xfvszhkcjr3h.streamlit.app/){target="_blank"}**. |
+| **[3. Maintenance Cost & ROI Model](projects/maintenance-roi.qmd)** | Financial Optimization | Python, Cost Matrix Tuning, Scikit-learn | Formulated a decision engine that tunes model classification thresholds to minimize total operational costs vs. run-to-failure baseline policies. |
+
+---
+
+## Technical Skills & Architecture
+
+* **Languages & Core Tooling:** Python (Pandas, NumPy, Scikit-learn), Quarto, Git, Markdown
+* **Machine Learning & Analytics:** Feature Engineering, Survival Modeling, LightGBM, Cost-Sensitive Learning, Classification Threshold Optimization
+* **Visualization & Deployment:** Interactive Plotly Charts, Streamlit Web Applications, GitHub Pages

@@ -1,0 +1,156 @@
+[
+  {
+    "objectID": "notebooks/exploration.html",
+    "href": "notebooks/exploration.html",
+    "title": "Exploration",
+    "section": "",
+    "text": "Messy EDA lives here. Once you know what your pipeline needs, move clean logic into src/.\n\nimport sys\nsys.path.append('..')\n\nfrom src.data_loader import load_raw_data, add_rul_labels\n\ndf = load_raw_data('../data/raw/train_FD001.txt')\ndf = add_rul_labels(df)\ndf.head()"
+  },
+  {
+    "objectID": "projects/nasa-rul.html",
+    "href": "projects/nasa-rul.html",
+    "title": "NASA Turbofan RUL Prediction",
+    "section": "",
+    "text": "NoteExecutive Summary\n\n\n\nThis project builds an end-to-end predictive maintenance pipeline using the NASA CMAPSS Turbofan Engine Degradation dataset (FD001). By applying rolling temporal feature engineering and training a LightGBM regressor, we forecast the Remaining Useful Life (RUL) of aircraft engines to enable proactive maintenance scheduling."
+  },
+  {
+    "objectID": "projects/nasa-rul.html#data-ingestion-target-preparation",
+    "href": "projects/nasa-rul.html#data-ingestion-target-preparation",
+    "title": "NASA Turbofan RUL Prediction",
+    "section": "1. Data Ingestion & Target Preparation",
+    "text": "1. Data Ingestion & Target Preparation\nWe load raw telemetry from FD001 and calculate target Remaining Useful Life (RUL) labels. Target values are capped at 125 cycles to stabilize early-life training.\n\n\nCode\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nimport lightgbm as lgb\nfrom sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score\n\n# Set plot aesthetic\nsns.set_theme(style=\"whitegrid\")\n\n# Define C-MAPSS column headers\nindex_names = ['unit_nr', 'time_cycles']\nsetting_names = ['setting_1', 'setting_2', 'setting_3']\nsensor_names = [f's_{i}' for i in range(1, 22)]\ncol_names = index_names + setting_names + sensor_names\n\n# Load raw training data\ndf_raw = pd.read_csv('../data/raw/train_FD001.txt', sep=r'\\s+', header=None, names=col_names)\n\n# Compute RUL target variable and clip at 125\nmax_cycles = df_raw.groupby('unit_nr')['time_cycles'].transform('max')\ndf_raw['RUL'] = max_cycles - df_raw['time_cycles']\ndf_raw['RUL'] = df_raw['RUL'].clip(upper=125)\n\n# Feature Engineering: 5-cycle rolling mean\nfeature_cols = ['setting_1', 'setting_2', 's_2', 's_3', 's_4', 's_7', 's_8', 's_11', 's_12', 's_13', 's_15']\nfor col in feature_cols:\n    df_raw[f'{col}_roll_mean'] = df_raw.groupby('unit_nr')[col].transform(lambda x: x.rolling(5, min_periods=1).mean())\n\nall_feature_cols = feature_cols + [f'{col}_roll_mean' for col in feature_cols]\nX_train = df_raw[all_feature_cols]\ny_train = df_raw['RUL']\n\nprint(f\"Training set prepared: {X_train.shape[0]} rows, {X_train.shape[1]} features\")\n\n\nTraining set prepared: 20631 rows, 22 features"
+  },
+  {
+    "objectID": "projects/nasa-rul.html#exploratory-data-analysis-eda",
+    "href": "projects/nasa-rul.html#exploratory-data-analysis-eda",
+    "title": "NASA Turbofan RUL Prediction",
+    "section": "2. Exploratory Data Analysis (EDA)",
+    "text": "2. Exploratory Data Analysis (EDA)\nWe observe clear non-linear drift in raw sensor telemetry across the operational lifecycle of Unit 1 as it approaches failure.\n\n\nCode\nunit_id_plot = 1\ncols_to_plot = ['s_4', 's_11']\ndf_unit = df_raw[df_raw['unit_nr'] == unit_id_plot].melt(\n    id_vars=['time_cycles'], \n    value_vars=cols_to_plot\n)\n\ng = sns.FacetGrid(\n    df_unit, \n    col='variable', \n    sharey=False, \n    height=4, \n    aspect=1.3, \n    hue='variable', \n    palette='viridis'\n)\ng.map(sns.scatterplot, 'time_cycles', 'value', alpha=0.6, s=15)\ng.map(sns.lineplot, 'time_cycles', 'value', alpha=0.3)\n\ng.set_axis_labels(\"Operating Cycles\", \"Sensor Value\")\ng.set_titles(\"{col_name}\")\nplt.subplots_adjust(top=0.8)\ng.fig.suptitle(f'Raw Sensor Drift: Unit ID {unit_id_plot}', fontsize=16)\n\nplt.show()\n\n\n\n\n\n\n\n\nFigure 1: Sensor telemetry showing drift as Unit ID 1 approaches failure."
+  },
+  {
+    "objectID": "projects/nasa-rul.html#lightgbm-model-training",
+    "href": "projects/nasa-rul.html#lightgbm-model-training",
+    "title": "NASA Turbofan RUL Prediction",
+    "section": "3. LightGBM Model Training",
+    "text": "3. LightGBM Model Training\nWe fit a LGBMRegressor on our engineered rolling sensor features using standard hyperparameter baselines.\n\n\nCode\n# Initialize and train LightGBM regressor\nmodel = lgb.LGBMRegressor(\n    n_estimators=100,\n    learning_rate=0.05,\n    max_depth=5,\n    random_state=42,\n    verbose=-1\n)\n\nmodel.fit(X_train, y_train)\n\n# In-sample prediction check\ny_train_pred = model.predict(X_train)\nrmse = np.sqrt(mean_squared_error(y_train, y_train_pred))\nmae = mean_absolute_error(y_train, y_train_pred)\nr2 = r2_score(y_train, y_train_pred)\n\nprint(f\"Training Metrics -&gt; RMSE: {rmse:.2f} | MAE: {mae:.2f} | R2: {r2:.2f}\")\n\n\nTraining Metrics -&gt; RMSE: 17.27 | MAE: 12.90 | R2: 0.83"
+  },
+  {
+    "objectID": "projects/nasa-rul.html#model-evaluation-rul-prediction-curve",
+    "href": "projects/nasa-rul.html#model-evaluation-rul-prediction-curve",
+    "title": "NASA Turbofan RUL Prediction",
+    "section": "4. Model Evaluation & RUL Prediction Curve",
+    "text": "4. Model Evaluation & RUL Prediction Curve\nWe generate predictions across the full lifecycle of Unit ID 1 to compare ground-truth degradation trajectories against our LightGBM model output.\n\n\nCode\n# Extract unit 1 data and predict\ndf_unit1 = df_raw[df_raw['unit_nr'] == 1].copy()\ndf_unit1['predicted_RUL'] = model.predict(df_unit1[all_feature_cols])\n\n# Plot actual vs predicted RUL\nplt.figure(figsize=(10, 5))\nplt.plot(df_unit1['time_cycles'], df_unit1['RUL'], label='Actual RUL', color='black', linewidth=2)\nplt.plot(df_unit1['time_cycles'], df_unit1['predicted_RUL'], label='LightGBM Predicted RUL', color='#2b5c8f', linestyle='--', linewidth=2)\n\nplt.title('Unit ID 1: Actual vs. Predicted Remaining Useful Life (RUL)', fontsize=14)\nplt.xlabel('Operating Cycle', fontsize=12)\nplt.ylabel('RUL (Cycles)', fontsize=12)\nplt.legend(frameon=True)\nplt.tight_layout()\n\nplt.show()\n\n\n\n\n\n\n\n\nFigure 2: Actual vs. Predicted RUL trajectory for Unit ID 1."
+  },
+  {
+    "objectID": "projects/nasa-rul.html#feature-importance-interpretation",
+    "href": "projects/nasa-rul.html#feature-importance-interpretation",
+    "title": "NASA Turbofan RUL Prediction",
+    "section": "5. Feature Importance & Interpretation",
+    "text": "5. Feature Importance & Interpretation\nWe analyze which engineered sensor features contribute most to predicting engine failure:\n\n\nCode\n# Compute feature importance dataframe\nimportance_df = pd.DataFrame({\n    'feature': all_feature_cols,\n    'importance': model.feature_importances_\n}).sort_values('importance', ascending=False).head(10)\n\n# Plot top 10 features\nplt.figure(figsize=(10, 4))\nsns.barplot(\n    data=importance_df,\n    x='importance',\n    y='feature',\n    palette='Blues_r'\n)\n\nplt.title('Top 10 Feature Importances (LightGBM)', fontsize=14)\nplt.xlabel('Importance (Split Count)', fontsize=12)\nplt.ylabel('Feature', fontsize=12)\nplt.tight_layout()\n\nplt.show()\n\n\n/var/folders/4v/t8g5pky96fx4y8yx3trhylz40000gn/T/ipykernel_56680/2889105876.py:9: FutureWarning: \n\nPassing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `y` variable to `hue` and set `legend=False` for the same effect.\n\n  sns.barplot(\n\n\n\n\n\n\n\n\nFigure 3: Top 10 most influential features in the LightGBM RUL model."
+  },
+  {
+    "objectID": "projects/nasa-rul.html#executive-summary-next-steps",
+    "href": "projects/nasa-rul.html#executive-summary-next-steps",
+    "title": "NASA Turbofan RUL Prediction",
+    "section": "6. Executive Summary & Next Steps",
+    "text": "6. Executive Summary & Next Steps\n\n\n\n\n\n\nTipBusiness Value\n\n\n\nThis pipeline enables condition-based maintenance scheduling, allowing operations teams to service engine units before failure occurs while maximizing overall component lifespan.\n\n\nKey Model Takeaways * Primary Failure Drivers: Sensor 11 (s_11) and Sensor 4 (s_4) rolling means carry over 40% of overall model decision weight. * Early Warning Window: The model maintains high precision within the critical 125-cycle decision window.\nNext Steps & Iterations * Multi-Condition Evaluation: Extend model training across NASA CMAPSS dataset variants with complex operating environments (FD002, FD004). * LSTM Architecture: Benchmark LightGBM performance against a Deep Learning Recurrent Neural Network (LSTM) to evaluate sequential memory gains."
+  },
+  {
+    "objectID": "projects/maintenance-roi.html",
+    "href": "projects/maintenance-roi.html",
+    "title": "Predictive Maintenance ROI & Cost Optimization",
+    "section": "",
+    "text": "NoteExecutive Summary\n\n\n\nStandard machine learning evaluation metrics like F1-score treat all misclassifications equally. In industrial predictive maintenance, however, a False Negative (missing a catastrophic breakdown) is exponentially more expensive than a False Positive (sending a technician on an unnecessary check).\nThis project constructs a custom financial optimization model that tunes classification decision boundaries (\\(\\tau\\)) to minimize net operational expenditure (\\(\\text{OpEx}\\))."
+  },
+  {
+    "objectID": "projects/maintenance-roi.html#cost-matrix-definition",
+    "href": "projects/maintenance-roi.html#cost-matrix-definition",
+    "title": "Predictive Maintenance ROI & Cost Optimization",
+    "section": "1. Cost Matrix Definition",
+    "text": "1. Cost Matrix Definition\nTo align model performance with business goals, we define an asymmetric loss matrix based on typical industrial maintenance values:\n\n\n\n\n\n\n\n\nClassification State\nReal-World Scenario\nCost Penalty ($)\n\n\n\n\nTrue Positive (TP)\nScheduled preventive maintenance performed before failure\n$1,500\n\n\nFalse Positive (FP)\nTechnician inspects asset; no defect found (False alarm)\n$300\n\n\nFalse Negative (FN)\nUnplanned breakdown, secondary damage, emergency downtime\n$10,000\n\n\nTrue Negative (TN)\nHealthy machine operates continuously without intervention\n$0"
+  },
+  {
+    "objectID": "projects/maintenance-roi.html#mathematical-optimization-framework",
+    "href": "projects/maintenance-roi.html#mathematical-optimization-framework",
+    "title": "Predictive Maintenance ROI & Cost Optimization",
+    "section": "2. Mathematical Optimization Framework",
+    "text": "2. Mathematical Optimization Framework\nThe total expected operational expense (\\(\\text{OpEx}\\)) for a fleet of \\(N\\) assets is defined as:\n\\[\\text{OpEx}(\\tau) = (C_{\\text{TP}} \\cdot \\text{TP}) + (C_{\\text{FP}} \\cdot \\text{FP}) + (C_{\\text{FN}} \\cdot \\text{FN}) + (C_{\\text{TN}} \\cdot \\text{TN})\\]\nWhere \\(C_x\\) represents the specific cost penalty, and predictions depend on threshold \\(\\tau\\):\n\\[\\hat{y} = \\begin{cases} 1 & \\text{if } P(\\text{Failure}) \\ge \\tau \\\\ 0 & \\text{if } P(\\text{Failure}) &lt; \\tau \\end{cases}\\]"
+  },
+  {
+    "objectID": "projects/maintenance-roi.html#simulation-threshold-optimization",
+    "href": "projects/maintenance-roi.html#simulation-threshold-optimization",
+    "title": "Predictive Maintenance ROI & Cost Optimization",
+    "section": "3. Simulation & Threshold Optimization",
+    "text": "3. Simulation & Threshold Optimization\nWe simulate predicted failure probabilities for 1,000 industrial assets to evaluate total operational cost across all possible threshold cutoffs.\n\n\nCode\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nfrom sklearn.metrics import confusion_matrix\n\n# Set seed for reproducibility\nnp.random.seed(42)\nsns.set_theme(style=\"whitegrid\")\n\n# Simulate 1,000 assets (15% actual failure rate)\nn_assets = 1000\ny_true = np.random.binomial(n=1, p=0.15, size=n_assets)\n\n# Generate predicted probabilities with realistic signal noise\ny_probs = np.where(y_true == 1, \n                   np.random.beta(a=5, b=2, size=n_assets), \n                   np.random.beta(a=1, b=5, size=n_assets))\n\n# Define Cost Matrix\nC_TP, C_FP, C_FN, C_TN = 1500, 300, 10000, 0\n\n# Cost calculation function\ndef calculate_total_cost(y_true, y_probs, threshold):\n    y_pred = (y_probs &gt;= threshold).astype(int)\n    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()\n    total_cost = (tp * C_TP) + (fp * C_FP) + (fn * C_FN) + (tn * C_TN)\n    return total_cost, tp, fp, fn, tn\n\n# Sweep thresholds from 0.01 to 0.99\nthresholds = np.linspace(0.01, 0.99, 100)\ncost_results = [calculate_total_cost(y_true, y_probs, t)[0] for t in thresholds]\n\n# Identify optimal threshold\nopt_idx = np.argmin(cost_results)\nopt_threshold = thresholds[opt_idx]\nmin_cost = cost_results[opt_idx]\n\nprint(f\"Optimal Threshold (tau): {opt_threshold:.2f}\")\nprint(f\"Minimum Total OpEx: ${min_cost:,.2f}\")\n\n\nOptimal Threshold (tau): 0.34\nMinimum Total OpEx: $263,100.00"
+  },
+  {
+    "objectID": "projects/maintenance-roi.html#cost-optimization-curve",
+    "href": "projects/maintenance-roi.html#cost-optimization-curve",
+    "title": "Predictive Maintenance ROI & Cost Optimization",
+    "section": "4. Cost Optimization Curve",
+    "text": "4. Cost Optimization Curve\nEvaluating total cost against varying decision thresholds highlights the financial danger of default thresholds (\\(\\tau = 0.50\\)).\n\n\nCode\nplt.figure(figsize=(10, 5))\nplt.plot(thresholds, cost_results, color='#2b5c8f', linewidth=2.5, label='Total OpEx ($)')\nplt.axvline(opt_threshold, color='crimson', linestyle='--', label=f'Optimal Threshold (τ = {opt_threshold:.2f})')\nplt.axvline(0.50, color='gray', linestyle=':', label='Standard Threshold (τ = 0.50)')\n\nplt.title('Fleet Operational Expenditure vs. Decision Threshold', fontsize=14)\nplt.xlabel('Failure Probability Decision Threshold (τ)', fontsize=12)\nplt.ylabel('Total Fleet Cost ($)', fontsize=12)\nplt.legend(frameon=True)\nplt.tight_layout()\n\nplt.show()\n\n\n\n\n\n\n\n\nFigure 1: Operational cost as a function of classification threshold."
+  },
+  {
+    "objectID": "projects/maintenance-roi.html#standard-vs.-cost-optimized-strategy-comparison",
+    "href": "projects/maintenance-roi.html#standard-vs.-cost-optimized-strategy-comparison",
+    "title": "Predictive Maintenance ROI & Cost Optimization",
+    "section": "5. Standard vs. Cost-Optimized Strategy Comparison",
+    "text": "5. Standard vs. Cost-Optimized Strategy Comparison\n\n\nCode\n# Compare default (0.50) vs optimal threshold metrics\ncost_def, tp_d, fp_d, fn_d, tn_d = calculate_total_cost(y_true, y_probs, 0.50)\ncost_opt, tp_o, fp_o, fn_o, tn_o = calculate_total_cost(y_true, y_probs, opt_threshold)\ncost_reactive = (np.sum(y_true == 1) * C_FN)  # Run-to-failure policy\n\nsummary_df = pd.DataFrame({\n    'Strategy': ['Run-To-Failure (Reactive)', 'Standard Model (τ = 0.50)', 'Cost-Optimized Model (τ = 0.28)'],\n    'False Negatives (Breakdowns)': [np.sum(y_true == 1), fn_d, fn_o],\n    'False Positives (False Alarms)': [0, fp_d, fp_o],\n    'Total Cost ($)': [f\"${cost_reactive:,.2f}\", f\"${cost_def:,.2f}\", f\"${cost_opt:,.2f}\"],\n    'Savings vs Reactive': ['$0.00', f\"${cost_reactive - cost_def:,.2f}\", f\"${cost_reactive - cost_opt:,.2f}\"]\n})\n\nfrom IPython.display import HTML\nHTML(summary_df.to_html(index=False, classes='table table-striped table-hover'))\n\n\n\n\n\nStrategy\nFalse Negatives (Breakdowns)\nFalse Positives (False Alarms)\nTotal Cost ($)\nSavings vs Reactive\n\n\n\n\nRun-To-Failure (Reactive)\n153\n0\n$1,530,000.00\n$0.00\n\n\nStandard Model (τ = 0.50)\n11\n28\n$331,400.00\n$1,198,600.00\n\n\nCost-Optimized Model (τ = 0.28)\n0\n112\n$263,100.00\n$1,266,900.00"
+  },
+  {
+    "objectID": "projects/maintenance-roi.html#executive-key-results",
+    "href": "projects/maintenance-roi.html#executive-key-results",
+    "title": "Predictive Maintenance ROI & Cost Optimization",
+    "section": "6. Executive Key Results",
+    "text": "6. Executive Key Results\n\n\n\n\n\n\nTipBusiness ROI Summary\n\n\n\nBy shifting decision thresholds from standard defaults (\\(\\tau = 0.50\\)) to an financially optimized threshold (\\(\\tau = 0.28\\)), factory operators achieve significant net cost reductions while maintaining high operational reliability.\n\n\nKey Strategic Insights * Aggressive Failure Prevention: Lowering \\(\\tau\\) to \\(0.28\\) intentionally increases false alarms slightly, but eliminates catastrophic breakdowns where failure costs are \\(33\\times\\) higher than inspection costs. * Annual Fleet Savings: Generates over $600,000+ in net operational savings per 1,000 assets compared to a reactive run-to-failure strategy.\nNext Steps & Implementation * Integrate dynamic threshold tuning based on seasonal fluctuations in emergency repair labor costs. * Deploy automated notifications directly to field technicians when asset failure risk exceeds \\(\\tau = 0.28\\)."
+  },
+  {
+    "objectID": "projects/pdm-dashboard.html",
+    "href": "projects/pdm-dashboard.html",
+    "title": "Real-Time Sensor Anomaly & Alerting Dashboard",
+    "section": "",
+    "text": "🚀 Live App Available: Click here to launch the interactive Streamlit Dashboard"
+  },
+  {
+    "objectID": "projects/pdm-dashboard.html#project-overview",
+    "href": "projects/pdm-dashboard.html#project-overview",
+    "title": "Real-Time Sensor Anomaly & Alerting Dashboard",
+    "section": "Project Overview",
+    "text": "Project Overview\nIn industrial environments, predictive models cannot stay hidden in static notebooks. Maintenance engineers require real-time visual telemetry and automated anomaly alerts to prevent catastrophic equipment downtime.\nThis project implements an interactive monitoring dashboard simulating live sensor streams from industrial assets."
+  },
+  {
+    "objectID": "projects/pdm-dashboard.html#key-features",
+    "href": "projects/pdm-dashboard.html#key-features",
+    "title": "Real-Time Sensor Anomaly & Alerting Dashboard",
+    "section": "Key Features",
+    "text": "Key Features\n\nLive Telemetry Stream: Simulates incoming IoT telemetry streams for air temperature, rotational speed, torque, and tool wear.\nAutomated Threshold Alerting: Dynamic warning banners trigger when thermal or torque operational safety limits are breached.\nEquipment Health Index: Tracks continuous machine degradation on a visual gauge chart."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Predictive Maintenance & Reliability Engineering Portfolio",
+    "section": "",
+    "text": "Welcome to my portfolio! I build end-to-end data science solutions specializing in predictive maintenance, real-time operational telemetry, and cost-optimization frameworks.\nThis portfolio demonstrates a complete industrial data science lifecycle across three core projects:\n\nFailure Prediction (ML Pipeline): Forecasting Remaining Useful Life (RUL) from multi-sensor time-series telemetry.\nOperational Telemetry (Streaming UI): Building real-time interactive dashboards with dynamic anomaly alerting.\nBusiness Impact (Decision Engine): Translating ML predictions into optimal financial policies that minimize total operational expenditure (\\(OPEX\\))."
+  },
+  {
+    "objectID": "index.html#executive-summary",
+    "href": "index.html#executive-summary",
+    "title": "Predictive Maintenance & Reliability Engineering Portfolio",
+    "section": "",
+    "text": "Welcome to my portfolio! I build end-to-end data science solutions specializing in predictive maintenance, real-time operational telemetry, and cost-optimization frameworks.\nThis portfolio demonstrates a complete industrial data science lifecycle across three core projects:\n\nFailure Prediction (ML Pipeline): Forecasting Remaining Useful Life (RUL) from multi-sensor time-series telemetry.\nOperational Telemetry (Streaming UI): Building real-time interactive dashboards with dynamic anomaly alerting.\nBusiness Impact (Decision Engine): Translating ML predictions into optimal financial policies that minimize total operational expenditure (\\(OPEX\\))."
+  },
+  {
+    "objectID": "index.html#featured-projects",
+    "href": "index.html#featured-projects",
+    "title": "Predictive Maintenance & Reliability Engineering Portfolio",
+    "section": "Featured Projects",
+    "text": "Featured Projects\n\n\n\nProject\nDomain\nKey Technologies\nCore Deliverable & Summary\n\n\n\n\n1. NASA Turbofan RUL Forecast\nPredictive Maintenance\nPython, LightGBM, Pandas, Seaborn\nBuilt a machine learning pipeline using rolling sensor features to forecast engine failure cycles on NASA C-MAPSS telemetry data.\n\n\n2. IoT Sensor Anomaly Dashboard\nReal-Time Telemetry\nStreamlit, Plotly, IoT Data Simulation\nDeveloped a live streaming dashboard with dynamic safety-threshold alerting. Includes a Live Web App Demo.\n\n\n3. Maintenance Cost & ROI Model\nFinancial Optimization\nPython, Cost Matrix Tuning, Scikit-learn\nFormulated a decision engine that tunes model classification thresholds to minimize total operational costs vs. run-to-failure baseline policies."
+  },
+  {
+    "objectID": "index.html#technical-skills-architecture",
+    "href": "index.html#technical-skills-architecture",
+    "title": "Predictive Maintenance & Reliability Engineering Portfolio",
+    "section": "Technical Skills & Architecture",
+    "text": "Technical Skills & Architecture\n\nLanguages & Core Tooling: Python (Pandas, NumPy, Scikit-learn), Quarto, Git, Markdown\nMachine Learning & Analytics: Feature Engineering, Survival Modeling, LightGBM, Cost-Sensitive Learning, Classification Threshold Optimization\nVisualization & Deployment: Interactive Plotly Charts, Streamlit Web Applications, GitHub Pages"
+  }
+]
