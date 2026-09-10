@@ -6,9 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-08-28">
+<meta name="author" content="Eli">
+<meta name="dcterms.date" content="2026-09-10">
 
-<title>Real-Time Sensor Anomaly &amp; Alerting Dashboard – Predictive Maintenance &amp; Reliability Engineering Portfolio</title>
+<title>Methodology &amp; Limitations – Predictive Maintenance &amp; Reliability Engineering Portfolio</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -75,6 +76,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -139,8 +169,9 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#project-overview" id="toc-project-overview" class="nav-link active" data-scroll-target="#project-overview">Project Overview</a></li>
-  <li><a href="#key-features" id="toc-key-features" class="nav-link" data-scroll-target="#key-features">Key Features</a></li>
+  <li><a href="#how-the-three-projects-connect" id="toc-how-the-three-projects-connect" class="nav-link active" data-scroll-target="#how-the-three-projects-connect">How the Three Projects Connect</a></li>
+  <li><a href="#validation-methodology" id="toc-validation-methodology" class="nav-link" data-scroll-target="#validation-methodology">Validation Methodology</a></li>
+  <li><a href="#known-limitations" id="toc-known-limitations" class="nav-link" data-scroll-target="#known-limitations">Known Limitations</a></li>
   </ul>
 </nav>
     </div>
@@ -149,25 +180,24 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Real-Time Sensor Anomaly &amp; Alerting Dashboard</h1>
-<p class="subtitle lead">Interactive Streamlit app monitoring IoT telemetry for predictive maintenance</p>
-  <div class="quarto-categories">
-    <div class="quarto-category">Streamlit</div>
-    <div class="quarto-category">Plotly</div>
-    <div class="quarto-category">IoT</div>
-    <div class="quarto-category">Anomaly Detection</div>
-  </div>
-  </div>
+<h1 class="title">Methodology &amp; Limitations</h1>
+</div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Eli </p>
+          </div>
+  </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 28, 2026</p>
+      <p class="date">September 10, 2026</p>
     </div>
   </div>
   
@@ -179,28 +209,71 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="callout callout-style-simple callout-note">
-<div class="callout-body d-flex">
+<p><em>This page documents how the three portfolio projects connect, and is intentionally direct about scope and limitations — knowing what a project doesn’t cover is as important as what it does.</em></p>
+<hr>
+<section id="how-the-three-projects-connect" class="level2">
+<h2 class="anchored" data-anchor-id="how-the-three-projects-connect">How the Three Projects Connect</h2>
+<p>The <a href="../projects/nasa-rul.html">NASA RUL model</a>’s predictions now feed directly into the <a href="../projects/maintenance-roi.html">Cost &amp; ROI Optimization</a> project. Each held-out test engine’s predicted RUL is converted into a failure-probability signal (<code>1 - predicted_RUL / 125</code>, clipped to <code>[0,1]</code>), which the cost-optimization framework consumes directly — rather than the two projects operating on independent simulated data. This makes the portfolio a genuine pipeline (classifier → business decision layer) rather than three standalone demos sharing a theme.</p>
+<p>The <a href="../projects/pdm-dashboard.html">Real-Time Sensor Dashboard</a> remains a separate simulation of live telemetry streaming and alerting — it demonstrates the operational-monitoring layer of a PdM system, which is architecturally distinct from the offline RUL/ROI pipeline (a live dashboard reacts to streaming data; RUL/ROI here operate on batch, held-out historical data).</p>
+<hr>
+</section>
+<section id="validation-methodology" class="level2">
+<h2 class="anchored" data-anchor-id="validation-methodology">Validation Methodology</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-body-container">
-<p>🚀 <strong>Live App Available:</strong> <a href="https://predictive-maintenance-portfolio-3etasqtc25xfvszhkcjr3h.streamlit.app/" target="_blank">Click here to launch the interactive Streamlit Dashboard</a></p>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Original Gap, Now Fixed
 </div>
 </div>
+<div class="callout-body-container callout-body">
+<p>The initial version of the RUL model reported RMSE/MAE/R² computed on its own training data (in-sample), which is optimistic and doesn’t reflect real generalization. The model is now evaluated on the official CMAPSS <code>test_FD001.txt</code> set with ground-truth RUL from <code>RUL_FD001.txt</code> — 100 engines the model never saw during training, evaluated at the exact cutoff cycle the test protocol specifies.</p>
 </div>
-<section id="project-overview" class="level2">
-<h2 class="anchored" data-anchor-id="project-overview">Project Overview</h2>
-<p>In industrial environments, predictive models cannot stay hidden in static notebooks. Maintenance engineers require <strong>real-time visual telemetry</strong> and <strong>automated anomaly alerts</strong> to prevent catastrophic equipment downtime.</p>
-<p>This project implements an interactive monitoring dashboard simulating live sensor streams from industrial assets.</p>
+</div>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Metric</th>
+<th style="text-align: center;">In-Sample (Training)</th>
+<th style="text-align: center;">Held-Out Test Set</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">RMSE</td>
+<td style="text-align: center;">17.27 cycles</td>
+<td style="text-align: center;">17.87 cycles</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MAE</td>
+<td style="text-align: center;">12.90 cycles</td>
+<td style="text-align: center;">12.58 cycles</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R²</td>
+<td style="text-align: center;">0.83</td>
+<td style="text-align: center;">0.80</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CMAPSS asymmetric score</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">915.95</td>
+</tr>
+</tbody>
+</table>
+<p>The gap between in-sample and held-out performance is small, indicating the original model wasn’t badly overfit — but this is now a claim backed by genuine generalization evidence rather than an unverified in-sample number.</p>
 <hr>
 </section>
-<section id="key-features" class="level2">
-<h2 class="anchored" data-anchor-id="key-features">Key Features</h2>
+<section id="known-limitations" class="level2">
+<h2 class="anchored" data-anchor-id="known-limitations">Known Limitations</h2>
 <ul>
-<li><strong>Live Telemetry Stream:</strong> Simulates incoming IoT telemetry streams for air temperature, rotational speed, torque, and tool wear.</li>
-<li><strong>Automated Threshold Alerting:</strong> Dynamic warning banners trigger when thermal or torque operational safety limits are breached.</li>
-<li><strong>Equipment Health Index:</strong> Tracks continuous machine degradation on a visual gauge chart.</li>
+<li><strong>Single operating condition, single fault mode.</strong> FD001 represents one operating regime (sea level) and one fault mode (HPC degradation). A model trained here would need re-validation on FD002/FD004 (multiple operating conditions) before claiming applicability to more complex real-world fleets.</li>
+<li><strong>Small held-out test set for the cost-optimization framework.</strong> The connected ROI analysis draws on 100 held-out engines with only 16 true near-failures. The specific dollar figures and optimal threshold (<span class="math inline">\(\tau \approx 0.59\)</span>) should be read as illustrative of the <em>method</em>, not as a production-ready dollar forecast — a real deployment would want a much larger fleet history before setting an operational threshold.</li>
+<li><strong>RUL-to-probability conversion is a simplifying heuristic.</strong> <code>failure_probability = 1 - predicted_RUL / 125</code> is a reasonable but simple linear mapping. A more rigorous version would calibrate this conversion against actual observed failure rates at each predicted-RUL band, or use quantile regression to produce a genuine probabilistic estimate rather than a linear proxy.</li>
+<li><strong>No explicit group-leakage handling was needed here</strong>, since the CMAPSS train/test split is already provided pre-separated by engine — but it’s worth naming explicitly: a naive random k-fold split on this kind of engine-cycle data would leak information across train/test (adjacent cycles from the same engine landing on both sides), inflating validation scores in a way that wouldn’t hold up in deployment.</li>
+<li><strong>The cost matrix values ($1,500 / $300 / $10,000) are illustrative industry-typical figures</strong>, not sourced from a specific real fleet — a production version would calibrate these against actual historical maintenance and downtime costs for the specific asset class.</li>
 </ul>
 
 

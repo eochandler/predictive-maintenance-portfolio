@@ -10,7 +10,7 @@ format:
 
 ::: {.callout-note}
 ## Executive Summary
-This project builds an end-to-end predictive maintenance pipeline using the NASA CMAPSS Turbofan Engine Degradation dataset (`FD001`). By applying rolling temporal feature engineering and training a LightGBM regressor, we forecast the Remaining Useful Life (RUL) of aircraft engines to enable proactive maintenance scheduling.
+This project builds an end-to-end predictive maintenance pipeline using the NASA CMAPSS Turbofan Engine Degradation dataset (`FD001`). By applying rolling temporal feature engineering and training a LightGBM regressor, we forecast the Remaining Useful Life (RUL) of aircraft engines to enable proactive maintenance scheduling. Model performance is validated on the official held-out test set, not just training data.
 :::
 
 ## 1. Data Ingestion & Target Preparation
@@ -120,7 +120,87 @@ print(f"Training Metrics -> RMSE: {rmse:.2f} | MAE: {mae:.2f} | R2: {r2:.2f}")
 
 ---
 
-## 4. Model Evaluation & RUL Prediction Curve
+## 4. Held-Out Test Set Validation
+
+::: {.callout-important}
+## Why This Matters
+The training metrics above are **in-sample** — computed on the same data the model learned from, which tends to look optimistic. To get an honest read on generalization, we evaluate on NASA's official held-out test set (`test_FD001.txt` + `RUL_FD001.txt`) — 100 engines the model never saw during training, evaluated at the exact cycle the CMAPSS test protocol specifies.
+:::
+
+```{python}
+# Load the official held-out test set
+df_test = pd.read_csv('../data/raw/test_FD001.txt', sep=r'\s+', header=None, names=col_names)
+
+for col in feature_cols:
+    df_test[f'{col}_roll_mean'] = df_test.groupby('unit_nr')[col].transform(lambda x: x.rolling(5, min_periods=1).mean())
+
+# Ground truth: RUL at the LAST recorded cycle of each test engine
+rul_truth = pd.read_csv('../data/raw/RUL_FD001.txt', header=None, names=['RUL'])
+rul_truth['unit_nr'] = rul_truth.index + 1
+
+# CMAPSS test protocol: predict RUL at the cutoff point of each sequence
+df_test_last = df_test.groupby('unit_nr').tail(1).reset_index(drop=True)
+df_test_last = df_test_last.merge(rul_truth, on='unit_nr')
+df_test_last['RUL'] = df_test_last['RUL'].clip(upper=125)
+
+X_test = df_test_last[all_feature_cols]
+y_test = df_test_last['RUL']
+y_test_pred = model.predict(X_test)
+
+test_rmse = np.sqrt(mean_squared_error(y_test, y_test_pred))
+test_mae = mean_absolute_error(y_test, y_test_pred)
+test_r2 = r2_score(y_test, y_test_pred)
+
+print(f"Held-Out Test Metrics -> RMSE: {test_rmse:.2f} | MAE: {test_mae:.2f} | R2: {test_r2:.2f}")
+```
+
+```{python}
+def cmapss_score(y_true, y_pred):
+    """Official CMAPSS asymmetric scoring function. Penalizes late
+    (unsafe/optimistic) predictions more heavily than early
+    (conservative) ones, matching real maintenance-scheduling risk -
+    unlike plain RMSE, which treats both directions equally."""
+    diff = np.asarray(y_pred) - np.asarray(y_true)
+    score = np.where(diff < 0, np.exp(-diff / 13) - 1, np.exp(diff / 10) - 1)
+    return float(np.sum(score))
+
+test_cmapss = cmapss_score(y_test, y_test_pred)
+print(f"CMAPSS asymmetric score: {test_cmapss:.2f} (lower is better)")
+```
+
+| Metric | In-Sample (Training) | Held-Out Test (100 unseen engines) |
+|:---|:---:|:---:|
+| RMSE | 17.27 | 17.87 |
+| MAE | 12.90 | 12.58 |
+| R² | 0.83 | 0.80 |
+| CMAPSS Score | — | 915.95 |
+
+::: {.callout-tip}
+## Interpretation
+The small gap between in-sample and held-out performance indicates the model generalizes reasonably well rather than having memorized the training set — but this is now a claim backed by evidence on genuinely unseen engines, not an unverified training-set number. See the [Methodology & Limitations](methodology.qmd) page for a full discussion of scope and constraints.
+:::
+
+```{python}
+#| code-fold: true
+#| code-summary: "Export predictions for the ROI project"
+
+# Convert RUL prediction into a failure-probability signal, and save it
+# so the Cost & ROI Optimization project can consume REAL model output
+# instead of simulated data - connecting the two projects into one
+# pipeline (classifier -> business decision layer).
+df_test_last['predicted_RUL'] = y_test_pred
+df_test_last['failure_probability'] = 1 - (df_test_last['predicted_RUL'] / 125).clip(0, 1)
+
+FAILURE_HORIZON = 20  # cycles - documented modeling choice, see Methodology page
+df_test_last['actual_failure_soon'] = (df_test_last['RUL'] <= FAILURE_HORIZON).astype(int)
+
+df_test_last[['unit_nr', 'RUL', 'predicted_RUL', 'failure_probability',
+              'actual_failure_soon']].to_csv('../data/real_model_outputs_for_roi.csv', index=False)
+```
+
+---
+
+## 5. Model Evaluation & RUL Prediction Curve
 
 We generate predictions across the full lifecycle of Unit ID 1 to compare ground-truth degradation trajectories against our LightGBM model output.
 
@@ -148,7 +228,7 @@ plt.show()
 
 ---
 
-## 5. Feature Importance & Interpretation
+## 6. Feature Importance & Interpretation
 
 We analyze which engineered sensor features contribute most to predicting engine failure:
 
@@ -181,17 +261,18 @@ plt.show()
 
 ---
 
-## 6. Executive Summary & Next Steps
+## 7. Executive Summary & Next Steps
 
 ::: {.callout-tip}
 ## Business Value
-This pipeline enables condition-based maintenance scheduling, allowing operations teams to service engine units before failure occurs while maximizing overall component lifespan.
+This pipeline enables condition-based maintenance scheduling, allowing operations teams to service engine units before failure occurs while maximizing overall component lifespan. Performance is validated on held-out engines, giving operations teams a defensible basis for scheduling decisions.
 :::
 
 **Key Model Takeaways**
 * **Primary Failure Drivers:** Sensor 11 (`s_11`) and Sensor 4 (`s_4`) rolling means carry over 40% of overall model decision weight.
-* **Early Warning Window:** The model maintains high precision within the critical 125-cycle decision window.
+* **Validated Generalization:** R² of 0.80 on 100 held-out engines the model never trained on, closely matching in-sample performance (R² 0.83) — indicating the model isn't overfit.
 
 **Next Steps & Iterations**
 * **Multi-Condition Evaluation:** Extend model training across NASA CMAPSS dataset variants with complex operating environments (`FD002`, `FD004`).
 * **LSTM Architecture:** Benchmark LightGBM performance against a Deep Learning Recurrent Neural Network (LSTM) to evaluate sequential memory gains.
+* See the [Methodology & Limitations](methodology.qmd) page for known constraints and scope.

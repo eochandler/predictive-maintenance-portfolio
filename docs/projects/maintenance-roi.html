@@ -185,6 +185,10 @@ window.Quarto = {
     <a class="dropdown-item" href="../projects/maintenance-roi.html">
  <span class="dropdown-text">Cost &amp; ROI Optimization</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../projects/methodology.html">
+ <span class="dropdown-text">Methodology &amp; Limitations</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -205,7 +209,7 @@ window.Quarto = {
   <ul>
   <li><a href="#cost-matrix-definition" id="toc-cost-matrix-definition" class="nav-link active" data-scroll-target="#cost-matrix-definition">1. Cost Matrix Definition</a></li>
   <li><a href="#mathematical-optimization-framework" id="toc-mathematical-optimization-framework" class="nav-link" data-scroll-target="#mathematical-optimization-framework">2. Mathematical Optimization Framework</a></li>
-  <li><a href="#simulation-threshold-optimization" id="toc-simulation-threshold-optimization" class="nav-link" data-scroll-target="#simulation-threshold-optimization">3. Simulation &amp; Threshold Optimization</a></li>
+  <li><a href="#real-model-output-threshold-optimization" id="toc-real-model-output-threshold-optimization" class="nav-link" data-scroll-target="#real-model-output-threshold-optimization">3. Real Model Output &amp; Threshold Optimization</a></li>
   <li><a href="#cost-optimization-curve" id="toc-cost-optimization-curve" class="nav-link" data-scroll-target="#cost-optimization-curve">4. Cost Optimization Curve</a></li>
   <li><a href="#standard-vs.-cost-optimized-strategy-comparison" id="toc-standard-vs.-cost-optimized-strategy-comparison" class="nav-link" data-scroll-target="#standard-vs.-cost-optimized-strategy-comparison">5. Standard vs.&nbsp;Cost-Optimized Strategy Comparison</a></li>
   <li><a href="#executive-key-results" id="toc-executive-key-results" class="nav-link" data-scroll-target="#executive-key-results">6. Executive Key Results</a></li>
@@ -257,7 +261,7 @@ window.Quarto = {
 </div>
 <div class="callout-body-container callout-body">
 <p>Standard machine learning evaluation metrics like F1-score treat all misclassifications equally. In industrial predictive maintenance, however, a <strong>False Negative</strong> (missing a catastrophic breakdown) is exponentially more expensive than a <strong>False Positive</strong> (sending a technician on an unnecessary check).</p>
-<p>This project constructs a custom financial optimization model that tunes classification decision boundaries (<span class="math inline">\(\tau\)</span>) to minimize net operational expenditure (<span class="math inline">\(\text{OpEx}\)</span>).</p>
+<p>This project constructs a custom financial optimization model that tunes classification decision boundaries (<span class="math inline">\(\tau\)</span>) to minimize net operational expenditure (<span class="math inline">\(\text{OpEx}\)</span>), applied to real predictions from the <a href="../projects/nasa-rul.html">NASA Turbofan RUL model</a> rather than simulated data.</p>
 </div>
 </div>
 <hr>
@@ -310,10 +314,22 @@ window.Quarto = {
 <p><span class="math display">\[\hat{y} = \begin{cases} 1 &amp; \text{if } P(\text{Failure}) \ge \tau \\ 0 &amp; \text{if } P(\text{Failure}) &lt; \tau \end{cases}\]</span></p>
 <hr>
 </section>
-<section id="simulation-threshold-optimization" class="level2">
-<h2 class="anchored" data-anchor-id="simulation-threshold-optimization">3. Simulation &amp; Threshold Optimization</h2>
-<p>We simulate predicted failure probabilities for 1,000 industrial assets to evaluate total operational cost across all possible threshold cutoffs.</p>
-<div id="409b247b" class="cell" data-execution_count="1">
+<section id="real-model-output-threshold-optimization" class="level2">
+<h2 class="anchored" data-anchor-id="real-model-output-threshold-optimization">3. Real Model Output &amp; Threshold Optimization</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>What Changed
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The original version of this project used simulated failure probabilities (<code>np.random.beta(...)</code>) to demonstrate the cost-threshold framework. This version consumes <strong>real predictions from the NASA RUL model</strong>, connecting the two projects into a single pipeline: classifier output feeds directly into the business decision layer, rather than two independent demos sharing a theme. See <a href="../projects/methodology.html">Methodology &amp; Limitations</a> for how <code>failure_probability</code> is derived from <code>predicted_RUL</code>.</p>
+</div>
+</div>
+<div id="6e0cbd46" class="cell" data-execution_count="1">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -322,44 +338,44 @@ window.Quarto = {
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Set seed for reproducibility</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">42</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate 1,000 assets (15% actual failure rate)</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>n_assets <span class="op">=</span> <span class="dv">1000</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>y_true <span class="op">=</span> np.random.binomial(n<span class="op">=</span><span class="dv">1</span>, p<span class="op">=</span><span class="fl">0.15</span>, size<span class="op">=</span>n_assets)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate predicted probabilities with realistic signal noise</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>y_probs <span class="op">=</span> np.where(y_true <span class="op">==</span> <span class="dv">1</span>, </span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                   np.random.beta(a<span class="op">=</span><span class="dv">5</span>, b<span class="op">=</span><span class="dv">2</span>, size<span class="op">=</span>n_assets), </span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>                   np.random.beta(a<span class="op">=</span><span class="dv">1</span>, b<span class="op">=</span><span class="dv">5</span>, size<span class="op">=</span>n_assets))</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Define Cost Matrix</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>C_TP, C_FP, C_FN, C_TN <span class="op">=</span> <span class="dv">1500</span>, <span class="dv">300</span>, <span class="dv">10000</span>, <span class="dv">0</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Cost calculation function</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculate_total_cost(y_true, y_probs, threshold):</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    y_pred <span class="op">=</span> (y_probs <span class="op">&gt;=</span> threshold).astype(<span class="bu">int</span>)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    tn, fp, fn, tp <span class="op">=</span> confusion_matrix(y_true, y_pred).ravel()</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    total_cost <span class="op">=</span> (tp <span class="op">*</span> C_TP) <span class="op">+</span> (fp <span class="op">*</span> C_FP) <span class="op">+</span> (fn <span class="op">*</span> C_FN) <span class="op">+</span> (tn <span class="op">*</span> C_TN)</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> total_cost, tp, fp, fn, tn</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Real model output, exported by the NASA RUL project's held-out</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># test-set evaluation (see nasa-rul.qmd, Section 4).</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">'../data/real_model_outputs_for_roi.csv'</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>y_true <span class="op">=</span> df[<span class="st">'actual_failure_soon'</span>].values</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>y_probs <span class="op">=</span> df[<span class="st">'failure_probability'</span>].values</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Define Cost Matrix</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>C_TP, C_FP, C_FN, C_TN <span class="op">=</span> <span class="dv">1500</span>, <span class="dv">300</span>, <span class="dv">10000</span>, <span class="dv">0</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Cost calculation function</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculate_total_cost(y_true, y_probs, threshold):</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    y_pred <span class="op">=</span> (y_probs <span class="op">&gt;=</span> threshold).astype(<span class="bu">int</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    tn, fp, fn, tp <span class="op">=</span> confusion_matrix(y_true, y_pred, labels<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>]).ravel()</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    total_cost <span class="op">=</span> (tp <span class="op">*</span> C_TP) <span class="op">+</span> (fp <span class="op">*</span> C_FP) <span class="op">+</span> (fn <span class="op">*</span> C_FN) <span class="op">+</span> (tn <span class="op">*</span> C_TN)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> total_cost, tp, fp, fn, tn</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Sweep thresholds from 0.01 to 0.99</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>thresholds <span class="op">=</span> np.linspace(<span class="fl">0.01</span>, <span class="fl">0.99</span>, <span class="dv">100</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>cost_results <span class="op">=</span> [calculate_total_cost(y_true, y_probs, t)[<span class="dv">0</span>] <span class="cf">for</span> t <span class="kw">in</span> thresholds]</span>
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Sweep thresholds from 0.01 to 0.99</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>thresholds <span class="op">=</span> np.linspace(<span class="fl">0.01</span>, <span class="fl">0.99</span>, <span class="dv">100</span>)</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>cost_results <span class="op">=</span> [calculate_total_cost(y_true, y_probs, t)[<span class="dv">0</span>] <span class="cf">for</span> t <span class="kw">in</span> thresholds]</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify optimal threshold</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>opt_idx <span class="op">=</span> np.argmin(cost_results)</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>opt_threshold <span class="op">=</span> thresholds[opt_idx]</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>min_cost <span class="op">=</span> cost_results[opt_idx]</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Optimal Threshold (tau): </span><span class="sc">{</span>opt_threshold<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Minimum Total OpEx: $</span><span class="sc">{</span>min_cost<span class="sc">:,.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify optimal threshold</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>opt_idx <span class="op">=</span> np.argmin(cost_results)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>opt_threshold <span class="op">=</span> thresholds[opt_idx]</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>min_cost <span class="op">=</span> cost_results[opt_idx]</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Fleet size (held-out test engines): </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Actual failures-soon in this fleet: </span><span class="sc">{</span><span class="bu">int</span>(y_true.<span class="bu">sum</span>())<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Optimal Threshold (tau): </span><span class="sc">{</span>opt_threshold<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Minimum Total OpEx: $</span><span class="sc">{</span>min_cost<span class="sc">:,.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Optimal Threshold (tau): 0.34
-Minimum Total OpEx: $263,100.00</code></pre>
+<pre><code>Fleet size (held-out test engines): 100
+Actual failures-soon in this fleet: 16
+Optimal Threshold (tau): 0.59
+Minimum Total OpEx: $27,600.00</code></pre>
 </div>
 </div>
 <hr>
@@ -390,7 +406,7 @@ Minimum Total OpEx: $263,100.00</code></pre>
 <img src="maintenance-roi_files/figure-html/fig-cost-curve-output-1.png" width="944" height="464" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cost-curve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Operational cost as a function of classification threshold.
+Figure&nbsp;1: Operational cost as a function of classification threshold, using real model predictions.
 </figcaption>
 </figure>
 </div>
@@ -400,17 +416,17 @@ Figure&nbsp;1: Operational cost as a function of classification threshold.
 </section>
 <section id="standard-vs.-cost-optimized-strategy-comparison" class="level2">
 <h2 class="anchored" data-anchor-id="standard-vs.-cost-optimized-strategy-comparison">5. Standard vs.&nbsp;Cost-Optimized Strategy Comparison</h2>
-<div id="0bc2822b" class="cell" data-execution_count="3">
+<div id="bac9acac" class="cell" data-execution_count="3">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare default (0.50) vs optimal threshold metrics</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>cost_def, tp_d, fp_d, fn_d, tn_d <span class="op">=</span> calculate_total_cost(y_true, y_probs, <span class="fl">0.50</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>cost_opt, tp_o, fp_o, fn_o, tn_o <span class="op">=</span> calculate_total_cost(y_true, y_probs, opt_threshold)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>cost_reactive <span class="op">=</span> (np.<span class="bu">sum</span>(y_true <span class="op">==</span> <span class="dv">1</span>) <span class="op">*</span> C_FN)  <span class="co"># Run-to-failure policy</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>cost_reactive <span class="op">=</span> <span class="bu">int</span>(y_true.<span class="bu">sum</span>()) <span class="op">*</span> C_FN  <span class="co"># Run-to-failure policy</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>summary_df <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Strategy'</span>: [<span class="st">'Run-To-Failure (Reactive)'</span>, <span class="st">'Standard Model (τ = 0.50)'</span>, <span class="st">'Cost-Optimized Model (τ = 0.28)'</span>],</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'False Negatives (Breakdowns)'</span>: [np.<span class="bu">sum</span>(y_true <span class="op">==</span> <span class="dv">1</span>), fn_d, fn_o],</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Strategy'</span>: [<span class="st">'Run-To-Failure (Reactive)'</span>, <span class="st">'Standard Model (τ = 0.50)'</span>, <span class="ss">f'Cost-Optimized Model (τ = </span><span class="sc">{</span>opt_threshold<span class="sc">:.2f}</span><span class="ss">)'</span>],</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'False Negatives (Breakdowns)'</span>: [<span class="bu">int</span>(y_true.<span class="bu">sum</span>()), fn_d, fn_o],</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'False Positives (False Alarms)'</span>: [<span class="dv">0</span>, fp_d, fp_o],</span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Total Cost ($)'</span>: [<span class="ss">f"$</span><span class="sc">{</span>cost_reactive<span class="sc">:,.2f}</span><span class="ss">"</span>, <span class="ss">f"$</span><span class="sc">{</span>cost_def<span class="sc">:,.2f}</span><span class="ss">"</span>, <span class="ss">f"$</span><span class="sc">{</span>cost_opt<span class="sc">:,.2f}</span><span class="ss">"</span>],</span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Savings vs Reactive'</span>: [<span class="st">'$0.00'</span>, <span class="ss">f"$</span><span class="sc">{</span>cost_reactive <span class="op">-</span> cost_def<span class="sc">:,.2f}</span><span class="ss">"</span>, <span class="ss">f"$</span><span class="sc">{</span>cost_reactive <span class="op">-</span> cost_opt<span class="sc">:,.2f}</span><span class="ss">"</span>]</span>
@@ -433,24 +449,24 @@ Figure&nbsp;1: Operational cost as a function of classification threshold.
 <tbody>
 <tr class="odd">
 <td>Run-To-Failure (Reactive)</td>
-<td>153</td>
+<td>16</td>
 <td>0</td>
-<td>$1,530,000.00</td>
+<td>$160,000.00</td>
 <td>$0.00</td>
 </tr>
 <tr class="even">
 <td>Standard Model (τ = 0.50)</td>
-<td>11</td>
-<td>28</td>
-<td>$331,400.00</td>
-<td>$1,198,600.00</td>
+<td>0</td>
+<td>18</td>
+<td>$29,400.00</td>
+<td>$130,600.00</td>
 </tr>
 <tr class="odd">
-<td>Cost-Optimized Model (τ = 0.28)</td>
+<td>Cost-Optimized Model (τ = 0.59)</td>
 <td>0</td>
-<td>112</td>
-<td>$263,100.00</td>
-<td>$1,266,900.00</td>
+<td>12</td>
+<td>$27,600.00</td>
+<td>$132,400.00</td>
 </tr>
 </tbody>
 </table>
@@ -470,11 +486,24 @@ Figure&nbsp;1: Operational cost as a function of classification threshold.
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>By shifting decision thresholds from standard defaults (<span class="math inline">\(\tau = 0.50\)</span>) to an financially optimized threshold (<span class="math inline">\(\tau = 0.28\)</span>), factory operators achieve <strong>significant net cost reductions</strong> while maintaining high operational reliability.</p>
+<p>On a held-out fleet of 100 engines (16 true near-failures), shifting decision thresholds from the standard default (<span class="math inline">\(\tau = 0.50\)</span>) to a cost-optimized threshold (<span class="math inline">\(\tau \approx 0.59\)</span>) eliminates all missed failures while reducing total cost from <strong>$29,400 to $27,600</strong>.</p>
 </div>
 </div>
-<p><strong>Key Strategic Insights</strong> * <strong>Aggressive Failure Prevention:</strong> Lowering <span class="math inline">\(\tau\)</span> to <span class="math inline">\(0.28\)</span> intentionally increases false alarms slightly, but eliminates catastrophic breakdowns where failure costs are <span class="math inline">\(33\times\)</span> higher than inspection costs. * <strong>Annual Fleet Savings:</strong> Generates over <strong>$600,000+ in net operational savings</strong> per 1,000 assets compared to a reactive run-to-failure strategy.</p>
-<p><strong>Next Steps &amp; Implementation</strong> * Integrate dynamic threshold tuning based on seasonal fluctuations in emergency repair labor costs. * Deploy automated notifications directly to field technicians when asset failure risk exceeds <span class="math inline">\(\tau = 0.28\)</span>.</p>
+<p><strong>Key Strategic Insights</strong> * <strong>Aggressive Failure Prevention:</strong> Raising <span class="math inline">\(\tau\)</span> to the cost-optimal point eliminates all missed breakdowns (false negatives), where failure costs are <span class="math inline">\(33\times\)</span> higher than inspection costs, at the expense of a modest increase in false alarms. * <strong>Directional Validation:</strong> Both strategies dramatically outperform a reactive run-to-failure policy ($160,000 total cost on this fleet), confirming the cost-optimization approach holds up on real model output, not just simulated data.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Reading These Numbers
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This held-out fleet has only 100 engines and 16 true near-failures — enough to validate the <em>method</em>, but too small to treat the specific dollar figures or optimal threshold as a production-ready forecast. See <a href="../projects/methodology.html">Methodology &amp; Limitations</a> for details.</p>
+</div>
+</div>
+<p><strong>Next Steps &amp; Implementation</strong> * Validate threshold stability on a larger fleet (e.g.&nbsp;combining FD001-FD004) before treating <span class="math inline">\(\tau \approx 0.59\)</span> as an operational recommendation. * Integrate dynamic threshold tuning based on seasonal fluctuations in emergency repair labor costs. * Deploy automated notifications directly to field technicians when asset failure risk exceeds the optimized threshold.</p>
 
 
 </section>

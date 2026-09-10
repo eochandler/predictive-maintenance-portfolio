@@ -153,6 +153,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../projects/maintenance-roi.html">
  <span class="dropdown-text">Cost &amp; ROI Optimization</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../projects/methodology.html">
+ <span class="dropdown-text">Methodology &amp; Limitations</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -174,9 +178,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#data-ingestion-target-preparation" id="toc-data-ingestion-target-preparation" class="nav-link active" data-scroll-target="#data-ingestion-target-preparation">1. Data Ingestion &amp; Target Preparation</a></li>
   <li><a href="#exploratory-data-analysis-eda" id="toc-exploratory-data-analysis-eda" class="nav-link" data-scroll-target="#exploratory-data-analysis-eda">2. Exploratory Data Analysis (EDA)</a></li>
   <li><a href="#lightgbm-model-training" id="toc-lightgbm-model-training" class="nav-link" data-scroll-target="#lightgbm-model-training">3. LightGBM Model Training</a></li>
-  <li><a href="#model-evaluation-rul-prediction-curve" id="toc-model-evaluation-rul-prediction-curve" class="nav-link" data-scroll-target="#model-evaluation-rul-prediction-curve">4. Model Evaluation &amp; RUL Prediction Curve</a></li>
-  <li><a href="#feature-importance-interpretation" id="toc-feature-importance-interpretation" class="nav-link" data-scroll-target="#feature-importance-interpretation">5. Feature Importance &amp; Interpretation</a></li>
-  <li><a href="#executive-summary-next-steps" id="toc-executive-summary-next-steps" class="nav-link" data-scroll-target="#executive-summary-next-steps">6. Executive Summary &amp; Next Steps</a></li>
+  <li><a href="#held-out-test-set-validation" id="toc-held-out-test-set-validation" class="nav-link" data-scroll-target="#held-out-test-set-validation">4. Held-Out Test Set Validation</a></li>
+  <li><a href="#model-evaluation-rul-prediction-curve" id="toc-model-evaluation-rul-prediction-curve" class="nav-link" data-scroll-target="#model-evaluation-rul-prediction-curve">5. Model Evaluation &amp; RUL Prediction Curve</a></li>
+  <li><a href="#feature-importance-interpretation" id="toc-feature-importance-interpretation" class="nav-link" data-scroll-target="#feature-importance-interpretation">6. Feature Importance &amp; Interpretation</a></li>
+  <li><a href="#executive-summary-next-steps" id="toc-executive-summary-next-steps" class="nav-link" data-scroll-target="#executive-summary-next-steps">7. Executive Summary &amp; Next Steps</a></li>
   </ul>
 </nav>
     </div>
@@ -224,13 +229,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This project builds an end-to-end predictive maintenance pipeline using the NASA CMAPSS Turbofan Engine Degradation dataset (<code>FD001</code>). By applying rolling temporal feature engineering and training a LightGBM regressor, we forecast the Remaining Useful Life (RUL) of aircraft engines to enable proactive maintenance scheduling.</p>
+<p>This project builds an end-to-end predictive maintenance pipeline using the NASA CMAPSS Turbofan Engine Degradation dataset (<code>FD001</code>). By applying rolling temporal feature engineering and training a LightGBM regressor, we forecast the Remaining Useful Life (RUL) of aircraft engines to enable proactive maintenance scheduling. Model performance is validated on the official held-out test set, not just training data.</p>
 </div>
 </div>
 <section id="data-ingestion-target-preparation" class="level2">
 <h2 class="anchored" data-anchor-id="data-ingestion-target-preparation">1. Data Ingestion &amp; Target Preparation</h2>
 <p>We load raw telemetry from <code>FD001</code> and calculate target <strong>Remaining Useful Life (RUL)</strong> labels. Target values are capped at 125 cycles to stabilize early-life training.</p>
-<div id="781380c3" class="cell" data-execution_count="1">
+<div id="0331f75f" class="cell" data-execution_count="1">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -324,7 +329,7 @@ Figure&nbsp;1: Sensor telemetry showing drift as Unit ID 1 approaches failure.
 <section id="lightgbm-model-training" class="level2">
 <h2 class="anchored" data-anchor-id="lightgbm-model-training">3. LightGBM Model Training</h2>
 <p>We fit a <code>LGBMRegressor</code> on our engineered rolling sensor features using standard hyperparameter baselines.</p>
-<div id="7c80ebd9" class="cell" data-execution_count="3">
+<div id="ce896f32" class="cell" data-execution_count="3">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize and train LightGBM regressor</span></span>
@@ -352,28 +357,157 @@ Figure&nbsp;1: Sensor telemetry showing drift as Unit ID 1 approaches failure.
 </div>
 <hr>
 </section>
-<section id="model-evaluation-rul-prediction-curve" class="level2">
-<h2 class="anchored" data-anchor-id="model-evaluation-rul-prediction-curve">4. Model Evaluation &amp; RUL Prediction Curve</h2>
-<p>We generate predictions across the full lifecycle of Unit ID 1 to compare ground-truth degradation trajectories against our LightGBM model output.</p>
-<div id="cell-fig-rul-predictions" class="cell" data-execution_count="4">
+<section id="held-out-test-set-validation" class="level2">
+<h2 class="anchored" data-anchor-id="held-out-test-set-validation">4. Held-Out Test Set Validation</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Why This Matters
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The training metrics above are <strong>in-sample</strong> — computed on the same data the model learned from, which tends to look optimistic. To get an honest read on generalization, we evaluate on NASA’s official held-out test set (<code>test_FD001.txt</code> + <code>RUL_FD001.txt</code>) — 100 engines the model never saw during training, evaluated at the exact cycle the CMAPSS test protocol specifies.</p>
+</div>
+</div>
+<div id="3ef343bf" class="cell" data-execution_count="4">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract unit 1 data and predict</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df_unit1 <span class="op">=</span> df_raw[df_raw[<span class="st">'unit_nr'</span>] <span class="op">==</span> <span class="dv">1</span>].copy()</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>df_unit1[<span class="st">'predicted_RUL'</span>] <span class="op">=</span> model.predict(df_unit1[all_feature_cols])</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot actual vs predicted RUL</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>plt.plot(df_unit1[<span class="st">'time_cycles'</span>], df_unit1[<span class="st">'RUL'</span>], label<span class="op">=</span><span class="st">'Actual RUL'</span>, color<span class="op">=</span><span class="st">'black'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>plt.plot(df_unit1[<span class="st">'time_cycles'</span>], df_unit1[<span class="st">'predicted_RUL'</span>], label<span class="op">=</span><span class="st">'LightGBM Predicted RUL'</span>, color<span class="op">=</span><span class="st">'#2b5c8f'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Unit ID 1: Actual vs. Predicted Remaining Useful Life (RUL)'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Operating Cycle'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'RUL (Cycles)'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>plt.legend(frameon<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the official held-out test set</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df_test <span class="op">=</span> pd.read_csv(<span class="st">'../data/raw/test_FD001.txt'</span>, sep<span class="op">=</span><span class="vs">r'</span><span class="dv">\s</span><span class="op">+</span><span class="vs">'</span>, header<span class="op">=</span><span class="va">None</span>, names<span class="op">=</span>col_names)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> feature_cols:</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    df_test[<span class="ss">f'</span><span class="sc">{</span>col<span class="sc">}</span><span class="ss">_roll_mean'</span>] <span class="op">=</span> df_test.groupby(<span class="st">'unit_nr'</span>)[col].transform(<span class="kw">lambda</span> x: x.rolling(<span class="dv">5</span>, min_periods<span class="op">=</span><span class="dv">1</span>).mean())</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Ground truth: RUL at the LAST recorded cycle of each test engine</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>rul_truth <span class="op">=</span> pd.read_csv(<span class="st">'../data/raw/RUL_FD001.txt'</span>, header<span class="op">=</span><span class="va">None</span>, names<span class="op">=</span>[<span class="st">'RUL'</span>])</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>rul_truth[<span class="st">'unit_nr'</span>] <span class="op">=</span> rul_truth.index <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># CMAPSS test protocol: predict RUL at the cutoff point of each sequence</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>df_test_last <span class="op">=</span> df_test.groupby(<span class="st">'unit_nr'</span>).tail(<span class="dv">1</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>df_test_last <span class="op">=</span> df_test_last.merge(rul_truth, on<span class="op">=</span><span class="st">'unit_nr'</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>df_test_last[<span class="st">'RUL'</span>] <span class="op">=</span> df_test_last[<span class="st">'RUL'</span>].clip(upper<span class="op">=</span><span class="dv">125</span>)</span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> df_test_last[all_feature_cols]</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> df_test_last[<span class="st">'RUL'</span>]</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>y_test_pred <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>test_rmse <span class="op">=</span> np.sqrt(mean_squared_error(y_test, y_test_pred))</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>test_mae <span class="op">=</span> mean_absolute_error(y_test, y_test_pred)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>test_r2 <span class="op">=</span> r2_score(y_test, y_test_pred)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Held-Out Test Metrics -&gt; RMSE: </span><span class="sc">{</span>test_rmse<span class="sc">:.2f}</span><span class="ss"> | MAE: </span><span class="sc">{</span>test_mae<span class="sc">:.2f}</span><span class="ss"> | R2: </span><span class="sc">{</span>test_r2<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Held-Out Test Metrics -&gt; RMSE: 17.87 | MAE: 12.58 | R2: 0.80</code></pre>
+</div>
+</div>
+<div id="b0b1962d" class="cell" data-execution_count="5">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cmapss_score(y_true, y_pred):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Official CMAPSS asymmetric scoring function. Penalizes late</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">    (unsafe/optimistic) predictions more heavily than early</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">    (conservative) ones, matching real maintenance-scheduling risk -</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">    unlike plain RMSE, which treats both directions equally."""</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    diff <span class="op">=</span> np.asarray(y_pred) <span class="op">-</span> np.asarray(y_true)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    score <span class="op">=</span> np.where(diff <span class="op">&lt;</span> <span class="dv">0</span>, np.exp(<span class="op">-</span>diff <span class="op">/</span> <span class="dv">13</span>) <span class="op">-</span> <span class="dv">1</span>, np.exp(diff <span class="op">/</span> <span class="dv">10</span>) <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">float</span>(np.<span class="bu">sum</span>(score))</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>test_cmapss <span class="op">=</span> cmapss_score(y_test, y_test_pred)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"CMAPSS asymmetric score: </span><span class="sc">{</span>test_cmapss<span class="sc">:.2f}</span><span class="ss"> (lower is better)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>CMAPSS asymmetric score: 915.95 (lower is better)</code></pre>
+</div>
+</div>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Metric</th>
+<th style="text-align: center;">In-Sample (Training)</th>
+<th style="text-align: center;">Held-Out Test (100 unseen engines)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">RMSE</td>
+<td style="text-align: center;">17.27</td>
+<td style="text-align: center;">17.87</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MAE</td>
+<td style="text-align: center;">12.90</td>
+<td style="text-align: center;">12.58</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R²</td>
+<td style="text-align: center;">0.83</td>
+<td style="text-align: center;">0.80</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CMAPSS Score</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">915.95</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Interpretation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The small gap between in-sample and held-out performance indicates the model generalizes reasonably well rather than having memorized the training set — but this is now a claim backed by evidence on genuinely unseen engines, not an unverified training-set number. See the <a href="../projects/methodology.html">Methodology &amp; Limitations</a> page for a full discussion of scope and constraints.</p>
+</div>
+</div>
+<div id="c76e397c" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Export predictions for the ROI project</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert RUL prediction into a failure-probability signal, and save it</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># so the Cost &amp; ROI Optimization project can consume REAL model output</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># instead of simulated data - connecting the two projects into one</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># pipeline (classifier -&gt; business decision layer).</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>df_test_last[<span class="st">'predicted_RUL'</span>] <span class="op">=</span> y_test_pred</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>df_test_last[<span class="st">'failure_probability'</span>] <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> (df_test_last[<span class="st">'predicted_RUL'</span>] <span class="op">/</span> <span class="dv">125</span>).clip(<span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>FAILURE_HORIZON <span class="op">=</span> <span class="dv">20</span>  <span class="co"># cycles - documented modeling choice, see Methodology page</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>df_test_last[<span class="st">'actual_failure_soon'</span>] <span class="op">=</span> (df_test_last[<span class="st">'RUL'</span>] <span class="op">&lt;=</span> FAILURE_HORIZON).astype(<span class="bu">int</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>df_test_last[[<span class="st">'unit_nr'</span>, <span class="st">'RUL'</span>, <span class="st">'predicted_RUL'</span>, <span class="st">'failure_probability'</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>              <span class="st">'actual_failure_soon'</span>]].to_csv(<span class="st">'../data/real_model_outputs_for_roi.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="model-evaluation-rul-prediction-curve" class="level2">
+<h2 class="anchored" data-anchor-id="model-evaluation-rul-prediction-curve">5. Model Evaluation &amp; RUL Prediction Curve</h2>
+<p>We generate predictions across the full lifecycle of Unit ID 1 to compare ground-truth degradation trajectories against our LightGBM model output.</p>
+<div id="cell-fig-rul-predictions" class="cell" data-execution_count="7">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract unit 1 data and predict</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>df_unit1 <span class="op">=</span> df_raw[df_raw[<span class="st">'unit_nr'</span>] <span class="op">==</span> <span class="dv">1</span>].copy()</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>df_unit1[<span class="st">'predicted_RUL'</span>] <span class="op">=</span> model.predict(df_unit1[all_feature_cols])</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot actual vs predicted RUL</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>plt.plot(df_unit1[<span class="st">'time_cycles'</span>], df_unit1[<span class="st">'RUL'</span>], label<span class="op">=</span><span class="st">'Actual RUL'</span>, color<span class="op">=</span><span class="st">'black'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>plt.plot(df_unit1[<span class="st">'time_cycles'</span>], df_unit1[<span class="st">'predicted_RUL'</span>], label<span class="op">=</span><span class="st">'LightGBM Predicted RUL'</span>, color<span class="op">=</span><span class="st">'#2b5c8f'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Unit ID 1: Actual vs. Predicted Remaining Useful Life (RUL)'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Operating Cycle'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'RUL (Cycles)'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>plt.legend(frameon<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-rul-predictions" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -391,35 +525,35 @@ Figure&nbsp;2: Actual vs.&nbsp;Predicted RUL trajectory for Unit ID 1.
 <hr>
 </section>
 <section id="feature-importance-interpretation" class="level2">
-<h2 class="anchored" data-anchor-id="feature-importance-interpretation">5. Feature Importance &amp; Interpretation</h2>
+<h2 class="anchored" data-anchor-id="feature-importance-interpretation">6. Feature Importance &amp; Interpretation</h2>
 <p>We analyze which engineered sensor features contribute most to predicting engine failure:</p>
-<div id="cell-fig-feature-importance" class="cell" data-execution_count="5">
+<div id="cell-fig-feature-importance" class="cell" data-execution_count="8">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute feature importance dataframe</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>importance_df <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'feature'</span>: all_feature_cols,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'importance'</span>: model.feature_importances_</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>}).sort_values(<span class="st">'importance'</span>, ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">10</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot top 10 features</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">4</span>))</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>sns.barplot(</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>importance_df,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">'importance'</span>,</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">'feature'</span>,</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    palette<span class="op">=</span><span class="st">'Blues_r'</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Top 10 Feature Importances (LightGBM)'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Importance (Split Count)'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Feature'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute feature importance dataframe</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>importance_df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'feature'</span>: all_feature_cols,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'importance'</span>: model.feature_importances_</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>}).sort_values(<span class="st">'importance'</span>, ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">10</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot top 10 features</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">4</span>))</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>sns.barplot(</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>importance_df,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">'importance'</span>,</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">'feature'</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    palette<span class="op">=</span><span class="st">'Blues_r'</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Top 10 Feature Importances (LightGBM)'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Importance (Split Count)'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Feature'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/4v/t8g5pky96fx4y8yx3trhylz40000gn/T/ipykernel_56680/2889105876.py:9: FutureWarning: 
+<pre><code>/var/folders/4v/t8g5pky96fx4y8yx3trhylz40000gn/T/ipykernel_24505/2889105876.py:9: FutureWarning: 
 
 Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `y` variable to `hue` and set `legend=False` for the same effect.
 
@@ -441,7 +575,7 @@ Figure&nbsp;3: Top 10 most influential features in the LightGBM RUL model.
 <hr>
 </section>
 <section id="executive-summary-next-steps" class="level2">
-<h2 class="anchored" data-anchor-id="executive-summary-next-steps">6. Executive Summary &amp; Next Steps</h2>
+<h2 class="anchored" data-anchor-id="executive-summary-next-steps">7. Executive Summary &amp; Next Steps</h2>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -452,11 +586,11 @@ Figure&nbsp;3: Top 10 most influential features in the LightGBM RUL model.
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This pipeline enables condition-based maintenance scheduling, allowing operations teams to service engine units before failure occurs while maximizing overall component lifespan.</p>
+<p>This pipeline enables condition-based maintenance scheduling, allowing operations teams to service engine units before failure occurs while maximizing overall component lifespan. Performance is validated on held-out engines, giving operations teams a defensible basis for scheduling decisions.</p>
 </div>
 </div>
-<p><strong>Key Model Takeaways</strong> * <strong>Primary Failure Drivers:</strong> Sensor 11 (<code>s_11</code>) and Sensor 4 (<code>s_4</code>) rolling means carry over 40% of overall model decision weight. * <strong>Early Warning Window:</strong> The model maintains high precision within the critical 125-cycle decision window.</p>
-<p><strong>Next Steps &amp; Iterations</strong> * <strong>Multi-Condition Evaluation:</strong> Extend model training across NASA CMAPSS dataset variants with complex operating environments (<code>FD002</code>, <code>FD004</code>). * <strong>LSTM Architecture:</strong> Benchmark LightGBM performance against a Deep Learning Recurrent Neural Network (LSTM) to evaluate sequential memory gains.</p>
+<p><strong>Key Model Takeaways</strong> * <strong>Primary Failure Drivers:</strong> Sensor 11 (<code>s_11</code>) and Sensor 4 (<code>s_4</code>) rolling means carry over 40% of overall model decision weight. * <strong>Validated Generalization:</strong> R² of 0.80 on 100 held-out engines the model never trained on, closely matching in-sample performance (R² 0.83) — indicating the model isn’t overfit.</p>
+<p><strong>Next Steps &amp; Iterations</strong> * <strong>Multi-Condition Evaluation:</strong> Extend model training across NASA CMAPSS dataset variants with complex operating environments (<code>FD002</code>, <code>FD004</code>). * <strong>LSTM Architecture:</strong> Benchmark LightGBM performance against a Deep Learning Recurrent Neural Network (LSTM) to evaluate sequential memory gains. * See the <a href="../projects/methodology.html">Methodology &amp; Limitations</a> page for known constraints and scope.</p>
 
 
 </section>

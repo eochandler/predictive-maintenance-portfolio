@@ -1,0 +1,46 @@
+---
+title: "Methodology & Limitations"
+author: "Eli"
+date: "2026-09-10"
+format:
+  html:
+    toc: true
+---
+
+*This page documents how the three portfolio projects connect, and is intentionally direct about scope and limitations — knowing what a project doesn't cover is as important as what it does.*
+
+---
+
+## How the Three Projects Connect
+
+The [NASA RUL model](nasa-rul.qmd)'s predictions now feed directly into the [Cost & ROI Optimization](maintenance-roi.qmd) project. Each held-out test engine's predicted RUL is converted into a failure-probability signal (`1 - predicted_RUL / 125`, clipped to `[0,1]`), which the cost-optimization framework consumes directly — rather than the two projects operating on independent simulated data. This makes the portfolio a genuine pipeline (classifier → business decision layer) rather than three standalone demos sharing a theme.
+
+The [Real-Time Sensor Dashboard](pdm-dashboard.qmd) remains a separate simulation of live telemetry streaming and alerting — it demonstrates the operational-monitoring layer of a PdM system, which is architecturally distinct from the offline RUL/ROI pipeline (a live dashboard reacts to streaming data; RUL/ROI here operate on batch, held-out historical data).
+
+---
+
+## Validation Methodology
+
+::: {.callout-important}
+## Original Gap, Now Fixed
+The initial version of the RUL model reported RMSE/MAE/R² computed on its own training data (in-sample), which is optimistic and doesn't reflect real generalization. The model is now evaluated on the official CMAPSS `test_FD001.txt` set with ground-truth RUL from `RUL_FD001.txt` — 100 engines the model never saw during training, evaluated at the exact cutoff cycle the test protocol specifies.
+:::
+
+| Metric | In-Sample (Training) | Held-Out Test Set |
+|:---|:---:|:---:|
+| RMSE | 17.27 cycles | 17.87 cycles |
+| MAE | 12.90 cycles | 12.58 cycles |
+| R² | 0.83 | 0.80 |
+| CMAPSS asymmetric score | — | 915.95 |
+
+The gap between in-sample and held-out performance is small, indicating the original model wasn't badly overfit — but this is now a claim backed by genuine generalization evidence rather than an unverified in-sample number.
+
+---
+
+## Known Limitations
+
+* **Single operating condition, single fault mode.** FD001 represents one operating regime (sea level) and one fault mode (HPC degradation). A model trained here would need re-validation on FD002/FD004 (multiple operating conditions) before claiming applicability to more complex real-world fleets.
+* **Small held-out test set for the cost-optimization framework.** The connected ROI analysis draws on 100 held-out engines with only 16 true near-failures. The specific dollar figures and optimal threshold ($\tau \approx 0.59$) should be read as illustrative of the *method*, not as a production-ready dollar forecast — a real deployment would want a much larger fleet history before setting an operational threshold.
+* **RUL-to-probability conversion is a simplifying heuristic.** `failure_probability = 1 - predicted_RUL / 125` is a reasonable but simple linear mapping. A more rigorous version would calibrate this conversion against actual observed failure rates at each predicted-RUL band, or use quantile regression to produce a genuine probabilistic estimate rather than a linear proxy.
+* **No explicit group-leakage handling was needed here**, since the CMAPSS train/test split is already provided pre-separated by engine — but it's worth naming explicitly: a naive random k-fold split on this kind of engine-cycle data would leak information across train/test (adjacent cycles from the same engine landing on both sides), inflating validation scores in a way that wouldn't hold up in deployment.
+* **The cost matrix values ($1,500 / $300 / $10,000) are illustrative industry-typical figures**, not sourced from a specific real fleet — a production version would calibrate these against actual historical maintenance and downtime costs for the specific asset class.

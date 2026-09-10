@@ -145,6 +145,10 @@ window.Quarto = {
     <a class="dropdown-item" href="./projects/maintenance-roi.html">
  <span class="dropdown-text">Cost &amp; ROI Optimization</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./projects/methodology.html">
+ <span class="dropdown-text">Methodology &amp; Limitations</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -197,10 +201,11 @@ window.Quarto = {
 <p>Welcome to my portfolio! I build end-to-end data science solutions specializing in <strong>predictive maintenance</strong>, <strong>real-time operational telemetry</strong>, and <strong>cost-optimization frameworks</strong>.</p>
 <p>This portfolio demonstrates a complete industrial data science lifecycle across three core projects:</p>
 <ol type="1">
-<li><strong>Failure Prediction (ML Pipeline):</strong> Forecasting Remaining Useful Life (RUL) from multi-sensor time-series telemetry.</li>
+<li><strong>Failure Prediction (ML Pipeline):</strong> Forecasting Remaining Useful Life (RUL) from multi-sensor time-series telemetry, validated on a held-out test set.</li>
 <li><strong>Operational Telemetry (Streaming UI):</strong> Building real-time interactive dashboards with dynamic anomaly alerting.</li>
-<li><strong>Business Impact (Decision Engine):</strong> Translating ML predictions into optimal financial policies that minimize total operational expenditure (<span class="math inline">\(OPEX\)</span>).</li>
+<li><strong>Business Impact (Decision Engine):</strong> Translating real model predictions into optimal financial policies that minimize total operational expenditure (<span class="math inline">\(OPEX\)</span>).</li>
 </ol>
+<p>See the <a href="./projects/methodology.html">Methodology &amp; Limitations</a> page for how these projects connect and where their current constraints are.</p>
 <hr>
 </section>
 <section id="featured-projects" class="level2">
@@ -219,7 +224,7 @@ window.Quarto = {
 <td><strong><a href="./projects/nasa-rul.html">1. NASA Turbofan RUL Forecast</a></strong></td>
 <td>Predictive Maintenance</td>
 <td>Python, LightGBM, Pandas, Seaborn</td>
-<td>Built a machine learning pipeline using rolling sensor features to forecast engine failure cycles on NASA C-MAPSS telemetry data.</td>
+<td>Built a machine learning pipeline using rolling sensor features to forecast engine failure cycles on NASA C-MAPSS telemetry data, validated on the official held-out test set.</td>
 </tr>
 <tr class="even">
 <td><strong><a href="./projects/pdm-dashboard.html">2. IoT Sensor Anomaly Dashboard</a></strong></td>
@@ -231,7 +236,7 @@ window.Quarto = {
 <td><strong><a href="./projects/maintenance-roi.html">3. Maintenance Cost &amp; ROI Model</a></strong></td>
 <td>Financial Optimization</td>
 <td>Python, Cost Matrix Tuning, Scikit-learn</td>
-<td>Formulated a decision engine that tunes model classification thresholds to minimize total operational costs vs.&nbsp;run-to-failure baseline policies.</td>
+<td>Formulated a decision engine that tunes model classification thresholds — using real predictions from Project 1 — to minimize total operational costs vs.&nbsp;run-to-failure baseline policies.</td>
 </tr>
 </tbody>
 </table>
@@ -241,7 +246,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="technical-skills-architecture">Technical Skills &amp; Architecture</h2>
 <ul>
 <li><strong>Languages &amp; Core Tooling:</strong> Python (Pandas, NumPy, Scikit-learn), Quarto, Git, Markdown</li>
-<li><strong>Machine Learning &amp; Analytics:</strong> Feature Engineering, Survival Modeling, LightGBM, Cost-Sensitive Learning, Classification Threshold Optimization</li>
+<li><strong>Machine Learning &amp; Analytics:</strong> Feature Engineering, Survival Modeling, LightGBM, Cost-Sensitive Learning, Classification Threshold Optimization, Held-Out Validation</li>
 <li><strong>Visualization &amp; Deployment:</strong> Interactive Plotly Charts, Streamlit Web Applications, GitHub Pages</li>
 </ul>
 
