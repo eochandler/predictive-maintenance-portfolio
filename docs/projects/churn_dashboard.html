@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Telco Customer Churn — Prediction & Retention Economics</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #FAFAF9;
+    --panel: #FFFFFF;
+    --ink: #1A1A2E;
+    --ink-soft: #5C5C70;
+    --line: #E4E3ED;
+    --violet: #5B4B8A;
+    --violet-soft: #EEEAF7;
+    --coral: #C4553D;
+    --coral-soft: #FBEAE5;
+    --teal: #2E8B7A;
+    --teal-soft: #E4F3EF;
+    --amber: #C68E17;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+  }
+  .serif { font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+
+  header.hero {
+    margin-bottom: 40px;
+  }
+  header.hero .eyebrow {
+    color: var(--violet);
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  header.hero h1 {
+    font-size: 38px;
+    font-weight: 700;
+    margin: 0 0 14px;
+    letter-spacing: -0.015em;
+    max-width: 22ch;
+  }
+  header.hero p.lede {
+    font-size: 16.5px;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 40px 0 56px;
+  }
+  .kpi {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 22px 20px;
+  }
+  .kpi .label { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 8px; }
+  .kpi .value { font-size: 30px; font-weight: 700; }
+  .kpi.highlight { background: var(--violet); color: white; border-color: var(--violet); }
+  .kpi.highlight .label { color: #D8CFF0; }
+
+  section { margin-bottom: 60px; }
+  section h2 { font-size: 22px; font-weight: 700; margin: 0 0 6px; }
+  section p.section-note { color: var(--ink-soft); font-size: 14.5px; margin: 0 0 24px; max-width: 68ch; }
+
+  .roi-block {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .roi-card {
+    border-radius: 10px;
+    padding: 24px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+  }
+  .roi-card.worst { border-color: var(--coral); background: var(--coral-soft); }
+  .roi-card.better { border-color: var(--amber); background: #FBF3E1; }
+  .roi-card.best { border-color: var(--teal); background: var(--teal-soft); }
+  .roi-card .roi-label { font-size: 13px; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; }
+  .roi-card .roi-value { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  .roi-card.worst .roi-value { color: var(--coral); }
+  .roi-card.better .roi-value { color: var(--amber); }
+  .roi-card.best .roi-value { color: var(--teal); }
+  .roi-card .roi-detail { font-size: 12.5px; color: var(--ink-soft); }
+
+  .chart-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 24px 26px 8px;
+  }
+  .chart-card canvas { max-height: 320px; }
+  .two-col { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; }
+
+  .segment-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .segment-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .segment-card .seg-name { font-weight: 700; font-size: 15px; margin-bottom: 10px; }
+  .segment-card .seg-stat { font-size: 13px; color: var(--ink-soft); margin-bottom: 4px; }
+  .segment-card .seg-churn { font-size: 22px; font-weight: 700; margin-top: 10px; }
+  .segment-card.risky { border-top: 4px solid var(--coral); }
+  .segment-card.risky .seg-churn { color: var(--coral); }
+  .segment-card.safe { border-top: 4px solid var(--teal); }
+  .segment-card.safe .seg-churn { color: var(--teal); }
+  .segment-card.mid { border-top: 4px solid var(--amber); }
+  .segment-card.mid .seg-churn { color: var(--amber); }
+
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  table.data-table th {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 2px solid var(--ink);
+    color: var(--ink-soft);
+    font-weight: 600;
+    font-size: 12px;
+  }
+  table.data-table td { padding: 10px 14px; border-bottom: 1px solid var(--line); }
+
+  footer {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 860px) {
+    .kpi-row, .segment-grid { grid-template-columns: repeat(2, 1fr); }
+    .roi-block, .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">TELCO CUSTOMER CHURN</div>
+    <h1 class="serif">Which customers to save, and what it's actually worth spending to save them</h1>
+    <p class="lede">An analysis of 7,043 telecom customers built to answer a retention team's real question: not just "who will churn," but "what's the dollar-optimal way to spend a limited retention budget on them."</p>
+  </header>
+
+  <div class="kpi-row" id="kpi-row"></div>
+
+  <section>
+    <h2 class="serif">The retention budget decision</h2>
+    <p class="section-note">Three strategies, same 1,761-customer held-out test set. The gap between "do nothing," "use a standard 50% cutoff," and "optimize the cutoff for actual dollar cost" is the entire point of this project.</p>
+    <div class="roi-block">
+      <div class="roi-card worst">
+        <div class="roi-label">Do Nothing (no retention program)</div>
+        <div class="roi-value" id="cost-none"></div>
+        <div class="roi-detail">Every churner's annual revenue is lost</div>
+      </div>
+      <div class="roi-card better">
+        <div class="roi-label">Standard Model (threshold = 0.50)</div>
+        <div class="roi-value" id="cost-default"></div>
+        <div class="roi-detail">Textbook default — rarely the cost-optimal choice</div>
+      </div>
+      <div class="roi-card best">
+        <div class="roi-label" id="opt-label">Cost-Optimized Threshold</div>
+        <div class="roi-value" id="cost-opt"></div>
+        <div class="roi-detail" id="opt-detail"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="serif">Cost vs. decision threshold</h2>
+    <p class="section-note">Total cost across every possible cutoff. The naive instinct is 0.50 — the actual minimum is well to the left of that, because the cost of a missed churner (their full annual revenue) vastly outweighs the cost of an unnecessary retention offer.</p>
+    <div class="chart-card">
+      <canvas id="costCurveChart"></canvas>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="serif">Customer segments</h2>
+    <p class="section-note">RFM-style segmentation (tenure as loyalty, services subscribed as engagement, monthly charge as value) surfaces four distinct groups — with churn rates ranging from 5% to 47% depending on segment, not evenly distributed.</p>
+    <div class="segment-grid" id="segment-grid"></div>
+  </section>
+
+  <div class="two-col">
+    <section>
+      <h2 class="serif">Churn rate by contract type</h2>
+      <p class="section-note">The single strongest lever available: month-to-month customers churn at over 15x the rate of two-year contract holders.</p>
+      <div class="chart-card">
+        <canvas id="contractChart"></canvas>
+      </div>
+    </section>
+    <section>
+      <h2 class="serif">Top predictive features</h2>
+      <p class="section-note">Contract type and tenure dominate — both are things the business can act on directly (incentivizing longer contracts), not just observe.</p>
+      <table class="data-table" id="featureTable"></table>
+    </section>
+  </div>
+
+  <section>
+    <h2 class="serif">Methodology</h2>
+    <p class="section-note" style="margin-bottom:0;">
+      Two models (Logistic Regression, Random Forest) were trained on a 75/25 stratified train/test split and compared by ROC-AUC on the held-out test set; the higher-AUC model's probabilities drive the retention-cost analysis above.
+      Unlike a flat cost matrix, each customer's false-negative cost is their own annual revenue at stake (monthly charge × 12) — a more realistic model of what a retention team actually loses per missed churner.
+      11 customers with blank billing history (all brand-new, zero-tenure accounts) had their total-charges field set to zero rather than being dropped.
+    </p>
+  </section>
+
+  <footer>
+    Data: IBM/Kaggle Telco Customer Churn dataset (7,043 real customer records) · Analysis: Elijah Chandler · Built with scikit-learn + Chart.js
+  </footer>
+
+</div>
+
+<script>
+const DATA = {"data_quality": {"total_customers": 7043, "blank_total_charges_rows": 11, "overall_churn_rate": 26.54}, "segments": [{"segment": 0, "customers": 1557, "avg_tenure": 10.27, "avg_services": 1.26, "avg_monthly_charge": 29.89, "churn_rate": 0.24, "label": "New Low-Engagement"}, {"segment": 1, "customers": 2144, "avg_tenure": 56.78, "avg_services": 5.77, "avg_monthly_charge": 92.1, "churn_rate": 0.16, "label": "Loyal High-Value"}, {"segment": 2, "customers": 2315, "avg_tenure": 14.79, "avg_services": 3.22, "avg_monthly_charge": 77.6, "churn_rate": 0.47, "label": "New & At-Risk"}, {"segment": 3, "customers": 1027, "avg_tenure": 54.56, "avg_services": 1.85, "avg_monthly_charge": 31.63, "churn_rate": 0.05, "label": "Loyal Low-Spend"}], "model_comparison": {"logistic_regression": {"auc": 0.844, "precision": 0.649, "recall": 0.559, "f1": 0.601}, "random_forest": {"auc": 0.842, "precision": 0.673, "recall": 0.471, "f1": 0.554}}, "feature_importance": [{"feature": "Contract", "importance": 0.16433065379343492}, {"feature": "tenure", "importance": 0.1638708913096001}, {"feature": "TotalCharges", "importance": 0.12378286430137485}, {"feature": "MonthlyCharges", "importance": 0.11620703865944058}, {"feature": "OnlineSecurity", "importance": 0.08316595871254862}, {"feature": "TechSupport", "importance": 0.07339698411026045}, {"feature": "InternetService", "importance": 0.05941426188390274}, {"feature": "PaymentMethod", "importance": 0.03657302066243451}, {"feature": "OnlineBackup", "importance": 0.03256440094222463}, {"feature": "PaperlessBilling", "importance": 0.02622458898297443}], "cost_optimization": {"retention_offer_cost": 100, "test_set_size": 1761, "no_model_cost": 411784.8, "default_threshold_cost": 201514.8, "optimal_threshold": 0.142, "optimal_cost": 128195.6, "savings_vs_no_model": 283589.2, "savings_vs_default": 73319.2, "threshold_curve": [{"threshold": 0.05, "cost": 133121.8}, {"threshold": 0.068, "cost": 130147.0}, {"threshold": 0.087, "cost": 130675.6}, {"threshold": 0.105, "cost": 128949.8}, {"threshold": 0.123, "cost": 129733.2}, {"threshold": 0.142, "cost": 128195.6}, {"threshold": 0.16, "cost": 130665.6}, {"threshold": 0.179, "cost": 132076.6}, {"threshold": 0.197, "cost": 131102.8}, {"threshold": 0.215, "cost": 131549.8}, {"threshold": 0.234, "cost": 134877.0}, {"threshold": 0.252, "cost": 137995.4}, {"threshold": 0.27, "cost": 142304.2}, {"threshold": 0.289, "cost": 146426.0}, {"threshold": 0.307, "cost": 151912.8}, {"threshold": 0.326, "cost": 155770.0}, {"threshold": 0.344, "cost": 159569.2}, {"threshold": 0.362, "cost": 161775.0}, {"threshold": 0.381, "cost": 164156.2}, {"threshold": 0.399, "cost": 168698.2}, {"threshold": 0.417, "cost": 174848.2}, {"threshold": 0.436, "cost": 181535.0}, {"threshold": 0.454, "cost": 186081.8}, {"threshold": 0.472, "cost": 194430.4}, {"threshold": 0.491, "cost": 200624.2}, {"threshold": 0.509, "cost": 206506.6}, {"threshold": 0.528, "cost": 219030.8}, {"threshold": 0.546, "cost": 230470.4}, {"threshold": 0.564, "cost": 243471.2}, {"threshold": 0.583, "cost": 250724.4}, {"threshold": 0.601, "cost": 264456.4}, {"threshold": 0.619, "cost": 275621.8}, {"threshold": 0.638, "cost": 291289.8}, {"threshold": 0.656, "cost": 302825.0}, {"threshold": 0.674, "cost": 319765.0}, {"threshold": 0.693, "cost": 339648.2}, {"threshold": 0.711, "cost": 349255.4}, {"threshold": 0.73, "cost": 362742.8}, {"threshold": 0.748, "cost": 373331.6}, {"threshold": 0.766, "cost": 388607.4}, {"threshold": 0.785, "cost": 398531.6}, {"threshold": 0.803, "cost": 401379.8}, {"threshold": 0.821, "cost": 408574.8}, {"threshold": 0.84, "cost": 410743.6}, {"threshold": 0.858, "cost": 411784.8}, {"threshold": 0.877, "cost": 411784.8}, {"threshold": 0.895, "cost": 411784.8}, {"threshold": 0.913, "cost": 411784.8}, {"threshold": 0.932, "cost": 411784.8}, {"threshold": 0.95, "cost": 411784.8}]}, "churn_by_contract": [{"contract_type": "Month-to-month", "churn_rate": 0.427, "customer_count": 3875}, {"contract_type": "One year", "churn_rate": 0.113, "customer_count": 1473}, {"contract_type": "Two year", "churn_rate": 0.028, "customer_count": 1695}], "churn_by_tenure": [{"tenure_bucket": "0-12 mo", "churn_rate": 0.474, "customer_count": 2186}, {"tenure_bucket": "13-24 mo", "churn_rate": 0.287, "customer_count": 1024}, {"tenure_bucket": "25-48 mo", "churn_rate": 0.204, "customer_count": 1594}, {"tenure_bucket": "49+ mo", "churn_rate": 0.095, "customer_count": 2239}]};
+
+const violet = '#5B4B8A', coral = '#C4553D', teal = '#2E8B7A', amber = '#C68E17', inkSoft = '#5C5C70';
+
+// ---- KPI row ----
+const bestModel = DATA.model_comparison.random_forest.auc >= DATA.model_comparison.logistic_regression.auc
+  ? DATA.model_comparison.random_forest : DATA.model_comparison.logistic_regression;
+const bestModelName = DATA.model_comparison.random_forest.auc >= DATA.model_comparison.logistic_regression.auc
+  ? 'Random Forest' : 'Logistic Regression';
+
+document.getElementById('kpi-row').innerHTML = `
+  <div class="kpi"><div class="label">Total Customers</div><div class="value">${DATA.data_quality.total_customers.toLocaleString()}</div></div>
+  <div class="kpi"><div class="label">Overall Churn Rate</div><div class="value">${DATA.data_quality.overall_churn_rate}%</div></div>
+  <div class="kpi highlight"><div class="label">Best Model (${bestModelName})</div><div class="value">${bestModel.auc} AUC</div></div>
+  <div class="kpi"><div class="label">Savings vs. No Program</div><div class="value">$${Math.round(DATA.cost_optimization.savings_vs_no_model).toLocaleString()}</div></div>
+`;
+
+// ---- ROI cards ----
+document.getElementById('cost-none').textContent = '$' + Math.round(DATA.cost_optimization.no_model_cost).toLocaleString();
+document.getElementById('cost-default').textContent = '$' + Math.round(DATA.cost_optimization.default_threshold_cost).toLocaleString();
+document.getElementById('cost-opt').textContent = '$' + Math.round(DATA.cost_optimization.optimal_cost).toLocaleString();
+document.getElementById('opt-label').textContent = `Cost-Optimized Threshold (τ=${DATA.cost_optimization.optimal_threshold})`;
+document.getElementById('opt-detail').textContent = `$${Math.round(DATA.cost_optimization.savings_vs_default).toLocaleString()} better than the standard 0.50 cutoff`;
+
+// ---- Segment cards ----
+const segGrid = document.getElementById('segment-grid');
+segGrid.innerHTML = DATA.segments.map(s => {
+  const riskClass = s.churn_rate > 0.3 ? 'risky' : (s.churn_rate > 0.15 ? 'mid' : 'safe');
+  return `
+    <div class="segment-card ${riskClass}">
+      <div class="seg-name">${s.label}</div>
+      <div class="seg-stat">${s.customers.toLocaleString()} customers</div>
+      <div class="seg-stat">Avg tenure: ${s.avg_tenure} mo</div>
+      <div class="seg-stat">Avg services: ${s.avg_services}</div>
+      <div class="seg-stat">Avg monthly: $${s.avg_monthly_charge}</div>
+      <div class="seg-churn">${(s.churn_rate * 100).toFixed(0)}% churn</div>
+    </div>
+  `;
+}).join('');
+
+// ---- Feature importance table ----
+const featureTable = document.getElementById('featureTable');
+featureTable.innerHTML = `
+  <tr><th>Feature</th><th>Importance</th></tr>
+  ${DATA.feature_importance.slice(0, 8).map(f => `
+    <tr><td>${f.feature}</td><td>${(f.importance * 100).toFixed(1)}%</td></tr>
+  `).join('')}
+`;
+
+// ---- Chart.js-dependent visuals (guarded so a slow/blocked CDN doesn't
+// prevent the data above from rendering) ----
+if (typeof Chart !== 'undefined') {
+  Chart.defaults.font.family = "-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif";
+  Chart.defaults.color = inkSoft;
+
+  new Chart(document.getElementById('costCurveChart'), {
+    type: 'line',
+    data: {
+      labels: DATA.cost_optimization.threshold_curve.map(t => t.threshold.toFixed(2)),
+      datasets: [{
+        label: 'Total Cost ($)',
+        data: DATA.cost_optimization.threshold_curve.map(t => t.cost),
+        borderColor: violet,
+        backgroundColor: violet + '22',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 0,
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { title: { display: true, text: 'Decision Threshold' }, grid: { display: false } },
+        y: { title: { display: true, text: 'Total Cost ($)' }, grid: { color: '#EEEDF6' } },
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+
+  new Chart(document.getElementById('contractChart'), {
+    type: 'bar',
+    data: {
+      labels: DATA.churn_by_contract.map(c => c.contract_type),
+      datasets: [{
+        label: 'Churn Rate',
+        data: DATA.churn_by_contract.map(c => (c.churn_rate * 100).toFixed(1)),
+        backgroundColor: [coral, amber, teal],
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { title: { display: true, text: 'Churn Rate (%)' }, grid: { color: '#EEEDF6' } },
+        x: { grid: { display: false } },
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+} else {
+  console.warn('Chart.js failed to load — charts skipped, but all data above rendered normally.');
+}
+</script>
+</body>
+</html>

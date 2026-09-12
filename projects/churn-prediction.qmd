@@ -1,0 +1,43 @@
+---
+title: "Telco Customer Churn: Prediction & Retention Economics"
+author: "Eli"
+date: "2026-09-12"
+format:
+  html:
+    toc: true
+---
+
+::: {.callout-note}
+## Executive Summary
+This project goes beyond "train a churn classifier and report accuracy." It answers a retention team's actual question — not just who will churn, but what's the dollar-optimal way to spend a limited retention budget on them — using real data from 7,043 telecom customers, RFM-style segmentation, a compared pair of models, and a per-customer cost-optimized decision threshold.
+:::
+
+## The Core Finding
+
+A cost-optimized retention threshold saves **$283,589** versus doing nothing, and a further **$73,319** versus the textbook-default 0.50 cutoff — on a 1,761-customer held-out test set alone.
+
+| Strategy | Total Cost | Savings vs. Do-Nothing |
+|:---|:---:|:---:|
+| Do Nothing | $411,785 | — |
+| Standard Threshold (0.50) | $201,515 | $210,270 |
+| Cost-Optimized Threshold (τ=0.14) | $128,196 | $283,589 |
+
+## Interactive Dashboard
+
+<iframe src="churn_dashboard.html" width="100%" height="2200" style="border: 1px solid #E4E3ED;" title="Telco Churn Dashboard"></iframe>
+
+[Open the dashboard in a new tab](churn_dashboard.html){target="_blank"}
+
+## Methodology
+
+Two models — Logistic Regression and Random Forest — were trained on a stratified 75/25 train/test split and compared by ROC-AUC on the held-out set. The higher-AUC model's predicted probabilities drive the cost-optimization analysis.
+
+Unlike a flat cost matrix, each customer's false-negative cost is **their own annual revenue at stake** (monthly charge × 12) — a more realistic model of what a retention team actually loses per missed churner, since losing a $30/month customer and a $100/month customer are not equally costly mistakes.
+
+Customer segments were built via KMeans clustering on tenure (loyalty proxy), number of subscribed services (engagement proxy), and monthly charge (value proxy) — an RFM-style approach adapted for a subscription business rather than a transactional one.
+
+Full SQL/Python source is in the project's [GitHub repository](https://github.com/eochandler/predictive-maintenance-portfolio).
+
+## Why This Project
+
+Alongside the Olist BI Dashboard, this project rounds out the general-analytics side of this portfolio: churn prediction is one of the most common real-world classification problems across nearly every subscription or recurring-revenue business, and pairing a model with an explicit dollar-cost framework — rather than stopping at an accuracy score — is what makes a model's output actionable to a non-technical stakeholder.

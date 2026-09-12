@@ -20,6 +20,8 @@ website:
             href: projects/methodology.qmd
           - text: "Olist BI Dashboard"
             href: projects/olist-dashboard.qmd
+          - text: "Churn Prediction"
+            href: projects/churn-prediction.qmd
 
 
 format:

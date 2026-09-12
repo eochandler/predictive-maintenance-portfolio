@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Eli">
+<meta name="dcterms.date" content="2026-09-12">
 
-<title>Predictive Maintenance &amp; Reliability Engineering Portfolio</title>
+<title>Telco Customer Churn: Prediction &amp; Retention Economics – Predictive Maintenance &amp; Reliability Engineering Portfolio</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -29,23 +31,23 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-445b8638c3d06994fee0907d791121c4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-445b8638c3d06994fee0907d791121c4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -74,37 +76,8 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -114,7 +87,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Predictive Maintenance &amp; Reliability Engineering Portfolio</span>
     </a>
   </div>
@@ -125,7 +98,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -134,27 +107,27 @@ window.Quarto = {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-projects">    
         <li>
-    <a class="dropdown-item" href="./projects/nasa-rul.html">
+    <a class="dropdown-item" href="../projects/nasa-rul.html">
  <span class="dropdown-text">NASA RUL Prediction</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./projects/pdm-dashboard.html">
+    <a class="dropdown-item" href="../projects/pdm-dashboard.html">
  <span class="dropdown-text">IoT Sensor Dashboard</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./projects/maintenance-roi.html">
+    <a class="dropdown-item" href="../projects/maintenance-roi.html">
  <span class="dropdown-text">Cost &amp; ROI Optimization</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./projects/methodology.html">
+    <a class="dropdown-item" href="../projects/methodology.html">
  <span class="dropdown-text">Methodology &amp; Limitations</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./projects/olist-dashboard.html">
+    <a class="dropdown-item" href="../projects/olist-dashboard.html">
  <span class="dropdown-text">Olist BI Dashboard</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./projects/churn-prediction.html">
+    <a class="dropdown-item" href="../projects/churn-prediction.html">
  <span class="dropdown-text">Churn Prediction</span></a>
   </li>  
     </ul>
@@ -175,10 +148,10 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#executive-summary" id="toc-executive-summary" class="nav-link active" data-scroll-target="#executive-summary">Executive Summary</a></li>
-  <li><a href="#featured-projects" id="toc-featured-projects" class="nav-link" data-scroll-target="#featured-projects">Featured Projects</a></li>
-  <li><a href="#technical-skills-architecture" id="toc-technical-skills-architecture" class="nav-link" data-scroll-target="#technical-skills-architecture">Technical Skills &amp; Architecture</a></li>
-  <li><a href="#technical-skills-architecture-1" id="toc-technical-skills-architecture-1" class="nav-link" data-scroll-target="#technical-skills-architecture-1">Technical Skills &amp; Architecture</a></li>
+  <li><a href="#the-core-finding" id="toc-the-core-finding" class="nav-link active" data-scroll-target="#the-core-finding">The Core Finding</a></li>
+  <li><a href="#interactive-dashboard" id="toc-interactive-dashboard" class="nav-link" data-scroll-target="#interactive-dashboard">Interactive Dashboard</a></li>
+  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">Methodology</a></li>
+  <li><a href="#why-this-project" id="toc-why-this-project" class="nav-link" data-scroll-target="#why-this-project">Why This Project</a></li>
   </ul>
 </nav>
     </div>
@@ -187,15 +160,26 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Predictive Maintenance &amp; Reliability Engineering Portfolio</h1>
-<p class="subtitle lead">End-to-End Machine Learning, Telemetry Monitoring &amp; Financial Decision Systems</p>
+<h1 class="title">Telco Customer Churn: Prediction &amp; Retention Economics</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Eli </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 12, 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -205,74 +189,65 @@ window.Quarto = {
 </header>
 
 
-<section id="executive-summary" class="level2">
-<h2 class="anchored" data-anchor-id="executive-summary">Executive Summary</h2>
-<p>Welcome to my portfolio! I build end-to-end data science solutions specializing in <strong>predictive maintenance</strong>, <strong>real-time operational telemetry</strong>, and <strong>cost-optimization frameworks</strong>.</p>
-<p>This portfolio demonstrates a complete industrial data science lifecycle across three core projects:</p>
-<ol type="1">
-<li><strong>Failure Prediction (ML Pipeline):</strong> Forecasting Remaining Useful Life (RUL) from multi-sensor time-series telemetry, validated on a held-out test set.</li>
-<li><strong>Operational Telemetry (Streaming UI):</strong> Building real-time interactive dashboards with dynamic anomaly alerting.</li>
-<li><strong>Business Impact (Decision Engine):</strong> Translating real model predictions into optimal financial policies that minimize total operational expenditure (<span class="math inline">\(OPEX\)</span>).</li>
-</ol>
-<p>See the <a href="./projects/methodology.html">Methodology &amp; Limitations</a> page for how these projects connect and where their current constraints are.</p>
-<hr>
-</section>
-<section id="featured-projects" class="level2">
-<h2 class="anchored" data-anchor-id="featured-projects">Featured Projects</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Executive Summary
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This project goes beyond “train a churn classifier and report accuracy.” It answers a retention team’s actual question — not just who will churn, but what’s the dollar-optimal way to spend a limited retention budget on them — using real data from 7,043 telecom customers, RFM-style segmentation, a compared pair of models, and a per-customer cost-optimized decision threshold.</p>
+</div>
+</div>
+<section id="the-core-finding" class="level2">
+<h2 class="anchored" data-anchor-id="the-core-finding">The Core Finding</h2>
+<p>A cost-optimized retention threshold saves <strong>$283,589</strong> versus doing nothing, and a further <strong>$73,319</strong> versus the textbook-default 0.50 cutoff — on a 1,761-customer held-out test set alone.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
-<th>Project</th>
-<th>Domain</th>
-<th>Key Technologies</th>
-<th>Core Deliverable &amp; Summary</th>
+<th style="text-align: left;">Strategy</th>
+<th style="text-align: center;">Total Cost</th>
+<th style="text-align: center;">Savings vs.&nbsp;Do-Nothing</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong><a href="./projects/nasa-rul.html">1. NASA Turbofan RUL Forecast</a></strong></td>
-<td>Predictive Maintenance</td>
-<td>Python, LightGBM, Pandas, Seaborn</td>
-<td>Built a machine learning pipeline using rolling sensor features to forecast engine failure cycles on NASA C-MAPSS telemetry data, validated on the official held-out test set.</td>
+<td style="text-align: left;">Do Nothing</td>
+<td style="text-align: center;">$411,785</td>
+<td style="text-align: center;">—</td>
 </tr>
 <tr class="even">
-<td><strong><a href="./projects/pdm-dashboard.html">2. IoT Sensor Anomaly Dashboard</a></strong></td>
-<td>Real-Time Telemetry</td>
-<td>Streamlit, Plotly, IoT Data Simulation</td>
-<td>Developed a live streaming dashboard with dynamic safety-threshold alerting. Includes a <strong><a href="https://predictive-maintenance-portfolio-3etasqtc25xfvszhkcjr3h.streamlit.app/" target="_blank">Live Web App Demo</a></strong>.</td>
+<td style="text-align: left;">Standard Threshold (0.50)</td>
+<td style="text-align: center;">$201,515</td>
+<td style="text-align: center;">$210,270</td>
 </tr>
 <tr class="odd">
-<td><strong><a href="./projects/maintenance-roi.html">3. Maintenance Cost &amp; ROI Model</a></strong></td>
-<td>Financial Optimization</td>
-<td>Python, Cost Matrix Tuning, Scikit-learn</td>
-<td>Formulated a decision engine that tunes model classification thresholds — using real predictions from Project 1 — to minimize total operational costs vs.&nbsp;run-to-failure baseline policies.</td>
-</tr>
-<tr class="even">
-<td><strong><a href="./projects/olist-dashboard.html">4. Olist Marketplace BI Dashboard</a></strong></td>
-<td>Business Intelligence</td>
-<td>SQL (DuckDB), Chart.js, HTML</td>
-<td>Answered a stakeholder question — where is the marketplace losing revenue and satisfaction in the delivery pipeline — using SQL run directly against 96K real orders. Found that late delivery drops review scores by 1.73 points.</td>
-</tr>
-<tr class="odd">
-<td><strong><a href="./projects/churn-prediction.html">5. Telco Customer Churn Prediction</a></strong></td>
-<td>Business Analytics</td>
-<td>scikit-learn, KMeans, Chart.js</td>
-<td>Compared two models and built a per-customer cost-optimized retention threshold — saving $283K vs.&nbsp;no program and $73K vs.&nbsp;a naive 0.50 cutoff on a 7,043-customer dataset.</td>
+<td style="text-align: left;">Cost-Optimized Threshold (τ=0.14)</td>
+<td style="text-align: center;">$128,196</td>
+<td style="text-align: center;">$283,589</td>
 </tr>
 </tbody>
 </table>
-<hr>
 </section>
-<section id="technical-skills-architecture" class="level2">
-<h2 class="anchored" data-anchor-id="technical-skills-architecture">Technical Skills &amp; Architecture</h2>
+<section id="interactive-dashboard" class="level2">
+<h2 class="anchored" data-anchor-id="interactive-dashboard">Interactive Dashboard</h2>
+<iframe src="churn_dashboard.html" width="100%" height="2200" style="border: 1px solid #E4E3ED;" title="Telco Churn Dashboard">
+</iframe>
+<p><a href="churn_dashboard.html" target="_blank">Open the dashboard in a new tab</a></p>
 </section>
-<section id="technical-skills-architecture-1" class="level2">
-<h2 class="anchored" data-anchor-id="technical-skills-architecture-1">Technical Skills &amp; Architecture</h2>
-<ul>
-<li><strong>Languages &amp; Core Tooling:</strong> Python (Pandas, NumPy, Scikit-learn), SQL (DuckDB), Quarto, Git, Markdown</li>
-<li><strong>Machine Learning &amp; Analytics:</strong> Feature Engineering, Survival Modeling, LightGBM, Cost-Sensitive Learning, Classification Threshold Optimization, Held-Out Validation, Customer Segmentation (KMeans), Logistic Regression / Random Forest Comparison</li>
-<li><strong>Visualization &amp; Deployment:</strong> Interactive Plotly &amp; Chart.js Dashboards, Streamlit Web Applications, GitHub Pages</li>
-</ul>
+<section id="methodology" class="level2">
+<h2 class="anchored" data-anchor-id="methodology">Methodology</h2>
+<p>Two models — Logistic Regression and Random Forest — were trained on a stratified 75/25 train/test split and compared by ROC-AUC on the held-out set. The higher-AUC model’s predicted probabilities drive the cost-optimization analysis.</p>
+<p>Unlike a flat cost matrix, each customer’s false-negative cost is <strong>their own annual revenue at stake</strong> (monthly charge × 12) — a more realistic model of what a retention team actually loses per missed churner, since losing a $30/month customer and a $100/month customer are not equally costly mistakes.</p>
+<p>Customer segments were built via KMeans clustering on tenure (loyalty proxy), number of subscribed services (engagement proxy), and monthly charge (value proxy) — an RFM-style approach adapted for a subscription business rather than a transactional one.</p>
+<p>Full SQL/Python source is in the project’s <a href="https://github.com/eochandler/predictive-maintenance-portfolio">GitHub repository</a>.</p>
+</section>
+<section id="why-this-project" class="level2">
+<h2 class="anchored" data-anchor-id="why-this-project">Why This Project</h2>
+<p>Alongside the Olist BI Dashboard, this project rounds out the general-analytics side of this portfolio: churn prediction is one of the most common real-world classification problems across nearly every subscription or recurring-revenue business, and pairing a model with an explicit dollar-cost framework — rather than stopping at an accuracy score — is what makes a model’s output actionable to a non-technical stakeholder.</p>
 
 
 </section>
