@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Eli">
-<meta name="dcterms.date" content="2026-09-10">
+<meta name="dcterms.date" content="2026-09-12">
 
-<title>Methodology &amp; Limitations – Predictive Maintenance &amp; Reliability Engineering Portfolio</title>
+<title>E-Commerce A/B Test: New Landing Page Analysis – Predictive Maintenance &amp; Reliability Engineering Portfolio</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -76,35 +76,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -181,9 +152,10 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#how-the-three-projects-connect" id="toc-how-the-three-projects-connect" class="nav-link active" data-scroll-target="#how-the-three-projects-connect">How the Three Projects Connect</a></li>
-  <li><a href="#validation-methodology" id="toc-validation-methodology" class="nav-link" data-scroll-target="#validation-methodology">Validation Methodology</a></li>
-  <li><a href="#known-limitations" id="toc-known-limitations" class="nav-link" data-scroll-target="#known-limitations">Known Limitations</a></li>
+  <li><a href="#the-verdict" id="toc-the-verdict" class="nav-link active" data-scroll-target="#the-verdict">The Verdict</a></li>
+  <li><a href="#interactive-dashboard" id="toc-interactive-dashboard" class="nav-link" data-scroll-target="#interactive-dashboard">Interactive Dashboard</a></li>
+  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">Methodology</a></li>
+  <li><a href="#why-this-project" id="toc-why-this-project" class="nav-link" data-scroll-target="#why-this-project">Why This Project</a></li>
   </ul>
 </nav>
     </div>
@@ -192,7 +164,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Methodology &amp; Limitations</h1>
+<h1 class="title">E-Commerce A/B Test: New Landing Page Analysis</h1>
 </div>
 
 
@@ -209,7 +181,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 10, 2026</p>
+      <p class="date">September 12, 2026</p>
     </div>
   </div>
   
@@ -221,72 +193,63 @@ window.Quarto = {
 </header>
 
 
-<p><em>This page documents how the three portfolio projects connect, and is intentionally direct about scope and limitations — knowing what a project doesn’t cover is as important as what it does.</em></p>
-<hr>
-<section id="how-the-three-projects-connect" class="level2">
-<h2 class="anchored" data-anchor-id="how-the-three-projects-connect">How the Three Projects Connect</h2>
-<p>The <a href="../projects/nasa-rul.html">NASA RUL model</a>’s predictions now feed directly into the <a href="../projects/maintenance-roi.html">Cost &amp; ROI Optimization</a> project. Each held-out test engine’s predicted RUL is converted into a failure-probability signal (<code>1 - predicted_RUL / 125</code>, clipped to <code>[0,1]</code>), which the cost-optimization framework consumes directly — rather than the two projects operating on independent simulated data. This makes the portfolio a genuine pipeline (classifier → business decision layer) rather than three standalone demos sharing a theme.</p>
-<p>The <a href="../projects/pdm-dashboard.html">Real-Time Sensor Dashboard</a> remains a separate simulation of live telemetry streaming and alerting — it demonstrates the operational-monitoring layer of a PdM system, which is architecturally distinct from the offline RUL/ROI pipeline (a live dashboard reacts to streaming data; RUL/ROI here operate on batch, held-out historical data).</p>
-<hr>
-</section>
-<section id="validation-methodology" class="level2">
-<h2 class="anchored" data-anchor-id="validation-methodology">Validation Methodology</h2>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>Original Gap, Now Fixed
+<span class="screen-reader-only">Important</span>Executive Summary
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The initial version of the RUL model reported RMSE/MAE/R² computed on its own training data (in-sample), which is optimistic and doesn’t reflect real generalization. The model is now evaluated on the official CMAPSS <code>test_FD001.txt</code> set with ground-truth RUL from <code>RUL_FD001.txt</code> — 100 engines the model never saw during training, evaluated at the exact cutoff cycle the test protocol specifies.</p>
+<p>An e-commerce company built a new landing page to increase conversions and ran an A/B test on 294,478 users. This project answers the real business question — ship it, keep the current page, or test longer — with the full statistical rigor that most A/B-test tutorials skip: data contamination handling, a sample-ratio-mismatch check, a confidence interval, and a power analysis distinguishing “no effect” from “not enough data.”</p>
 </div>
 </div>
+<section id="the-verdict" class="level2">
+<h2 class="anchored" data-anchor-id="the-verdict">The Verdict</h2>
+<p><strong>Do not ship the new page.</strong> The difference in conversion rate is not statistically significant (p = 0.905), and the 95% confidence interval for the difference spans zero. A power analysis confirms this null result is trustworthy — the test could reliably detect an effect as small as 0.35 percentage points, and the observed effect falls within the range it could not distinguish from noise.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th style="text-align: left;">Metric</th>
-<th style="text-align: center;">In-Sample (Training)</th>
-<th style="text-align: center;">Held-Out Test Set</th>
+<th style="text-align: center;">Control (Old Page)</th>
+<th style="text-align: center;">Treatment (New Page)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">RMSE</td>
-<td style="text-align: center;">17.27 cycles</td>
-<td style="text-align: center;">17.87 cycles</td>
+<td style="text-align: left;">Conversion Rate</td>
+<td style="text-align: center;">12.039%</td>
+<td style="text-align: center;">11.881%</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">MAE</td>
-<td style="text-align: center;">12.90 cycles</td>
-<td style="text-align: center;">12.58 cycles</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">R²</td>
-<td style="text-align: center;">0.83</td>
-<td style="text-align: center;">0.80</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">CMAPSS asymmetric score</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">915.95</td>
+<td style="text-align: left;">Sample Size</td>
+<td style="text-align: center;">145,274</td>
+<td style="text-align: center;">145,310</td>
 </tr>
 </tbody>
 </table>
-<p>The gap between in-sample and held-out performance is small, indicating the original model wasn’t badly overfit — but this is now a claim backed by genuine generalization evidence rather than an unverified in-sample number.</p>
-<hr>
 </section>
-<section id="known-limitations" class="level2">
-<h2 class="anchored" data-anchor-id="known-limitations">Known Limitations</h2>
-<ul>
-<li><strong>Single operating condition, single fault mode.</strong> FD001 represents one operating regime (sea level) and one fault mode (HPC degradation). A model trained here would need re-validation on FD002/FD004 (multiple operating conditions) before claiming applicability to more complex real-world fleets.</li>
-<li><strong>Small held-out test set for the cost-optimization framework.</strong> The connected ROI analysis draws on 100 held-out engines with only 16 true near-failures. The specific dollar figures and optimal threshold (<span class="math inline">\(\tau \approx 0.59\)</span>) should be read as illustrative of the <em>method</em>, not as a production-ready dollar forecast — a real deployment would want a much larger fleet history before setting an operational threshold.</li>
-<li><strong>RUL-to-probability conversion is a simplifying heuristic.</strong> <code>failure_probability = 1 - predicted_RUL / 125</code> is a reasonable but simple linear mapping. A more rigorous version would calibrate this conversion against actual observed failure rates at each predicted-RUL band, or use quantile regression to produce a genuine probabilistic estimate rather than a linear proxy.</li>
-<li><strong>No explicit group-leakage handling was needed here</strong>, since the CMAPSS train/test split is already provided pre-separated by engine — but it’s worth naming explicitly: a naive random k-fold split on this kind of engine-cycle data would leak information across train/test (adjacent cycles from the same engine landing on both sides), inflating validation scores in a way that wouldn’t hold up in deployment.</li>
-<li><strong>The cost matrix values ($1,500 / $300 / $10,000) are illustrative industry-typical figures</strong>, not sourced from a specific real fleet — a production version would calibrate these against actual historical maintenance and downtime costs for the specific asset class.</li>
-</ul>
+<section id="interactive-dashboard" class="level2">
+<h2 class="anchored" data-anchor-id="interactive-dashboard">Interactive Dashboard</h2>
+<iframe src="ab_test_dashboard.html" width="100%" height="2400" style="border: 1px solid #DFE2EA;" title="A/B Test Dashboard">
+</iframe>
+<p><a href="ab_test_dashboard.html" target="_blank">Open the dashboard in a new tab</a></p>
+</section>
+<section id="methodology" class="level2">
+<h2 class="anchored" data-anchor-id="methodology">Methodology</h2>
+<ol type="1">
+<li><strong>Data cleaning</strong>: 1.32% of rows had a mismatched group/page assignment (e.g.&nbsp;a “control” user who saw the new page) and were excluded, since their behavior can’t be attributed to either version. Duplicate user IDs were also removed, keeping the first occurrence.</li>
+<li><strong>Sample Ratio Mismatch (SRM) check</strong>: verified the ~50/50 split was healthy (chi-square p=0.947) before trusting any downstream comparison.</li>
+<li><strong>Main test</strong>: one-sided two-proportion z-test (H1: new page conversion &gt; old page conversion), with a 95% confidence interval for the absolute difference.</li>
+<li><strong>Power analysis</strong>: calculated the minimum detectable effect at 80% power given the actual sample size, to distinguish a genuine null result from an underpowered one.</li>
+<li><strong>Daily trend check</strong>: examined conversion rate by day across the 23-day test window to rule out a novelty effect.</li>
+</ol>
+</section>
+<section id="why-this-project" class="level2">
+<h2 class="anchored" data-anchor-id="why-this-project">Why This Project</h2>
+<p>Most A/B testing portfolio projects stop at “the p-value was above/below 0.05.” This one demonstrates the parts that separate a rigorous analyst from a p-value lookup: catching real data contamination before trusting a result, verifying randomization health via an SRM check, and correctly interpreting a null result by checking whether the test was even powered to detect a meaningful effect in the first place.</p>
 
 
 </section>

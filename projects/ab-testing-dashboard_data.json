@@ -1,0 +1,152 @@
+{
+  "data_quality": {
+    "raw_rows": 294478,
+    "mismatched_assignment_rows": 3893,
+    "duplicate_user_id_rows": 3894,
+    "rows_after_cleaning": 290584,
+    "rows_removed": 3894
+  },
+  "srm_check": {
+    "n_control": 145274,
+    "n_treatment": 145310,
+    "chi2": 0.0045,
+    "p_value": 0.9468,
+    "passed": true
+  },
+  "main_test": {
+    "control_conversions": 17489,
+    "control_n": 145274,
+    "control_rate": 0.12039,
+    "treatment_conversions": 17264,
+    "treatment_n": 145310,
+    "treatment_rate": 0.11881,
+    "absolute_diff": -0.00158,
+    "relative_diff_pct": -1.31,
+    "z_statistic": -1.3109,
+    "p_value": 0.9051,
+    "ci_95_low": -0.00394,
+    "ci_95_high": 0.00078,
+    "significant_at_05": false
+  },
+  "power_analysis": {
+    "achieved_power_for_observed_effect": 0.2587,
+    "minimum_detectable_lift_at_80pct_power": 0.0035
+  },
+  "daily_trend": [
+    {
+      "date": "2017-01-02",
+      "control_rate": 0.12556838055264077,
+      "treatment_rate": 0.11987381703470032
+    },
+    {
+      "date": "2017-01-03",
+      "control_rate": 0.11380880121396054,
+      "treatment_rate": 0.11378059836808703
+    },
+    {
+      "date": "2017-01-04",
+      "control_rate": 0.12192155670416539,
+      "treatment_rate": 0.11664883045405901
+    },
+    {
+      "date": "2017-01-05",
+      "control_rate": 0.12323012291893574,
+      "treatment_rate": 0.11498847040737895
+    },
+    {
+      "date": "2017-01-06",
+      "control_rate": 0.11534968210717529,
+      "treatment_rate": 0.1234622795316437
+    },
+    {
+      "date": "2017-01-07",
+      "control_rate": 0.12098728043609934,
+      "treatment_rate": 0.11620517476168861
+    },
+    {
+      "date": "2017-01-08",
+      "control_rate": 0.11888739344997756,
+      "treatment_rate": 0.12074626865671642
+    },
+    {
+      "date": "2017-01-09",
+      "control_rate": 0.1196439348219674,
+      "treatment_rate": 0.1180650037792895
+    },
+    {
+      "date": "2017-01-10",
+      "control_rate": 0.11286444244063722,
+      "treatment_rate": 0.12634408602150538
+    },
+    {
+      "date": "2017-01-11",
+      "control_rate": 0.11886961722488039,
+      "treatment_rate": 0.11509066386932414
+    },
+    {
+      "date": "2017-01-12",
+      "control_rate": 0.12204845139527752,
+      "treatment_rate": 0.12234443272562905
+    },
+    {
+      "date": "2017-01-13",
+      "control_rate": 0.11691086691086691,
+      "treatment_rate": 0.11124769514443761
+    },
+    {
+      "date": "2017-01-14",
+      "control_rate": 0.12675626145387905,
+      "treatment_rate": 0.11926049401424459
+    },
+    {
+      "date": "2017-01-15",
+      "control_rate": 0.1204944891271969,
+      "treatment_rate": 0.1134524354863338
+    },
+    {
+      "date": "2017-01-16",
+      "control_rate": 0.12183280230617509,
+      "treatment_rate": 0.11917494270435447
+    },
+    {
+      "date": "2017-01-17",
+      "control_rate": 0.12286534683391265,
+      "treatment_rate": 0.1272560416029367
+    },
+    {
+      "date": "2017-01-18",
+      "control_rate": 0.1248071582844801,
+      "treatment_rate": 0.12479176132061184
+    },
+    {
+      "date": "2017-01-19",
+      "control_rate": 0.11994527211918517,
+      "treatment_rate": 0.11721611721611722
+    },
+    {
+      "date": "2017-01-20",
+      "control_rate": 0.11524334251606978,
+      "treatment_rate": 0.11768228776762989
+    },
+    {
+      "date": "2017-01-21",
+      "control_rate": 0.12594458438287154,
+      "treatment_rate": 0.11570121951219513
+    },
+    {
+      "date": "2017-01-22",
+      "control_rate": 0.11916312916919346,
+      "treatment_rate": 0.11800869695606538
+    },
+    {
+      "date": "2017-01-23",
+      "control_rate": 0.12567004169148302,
+      "treatment_rate": 0.12106135986733002
+    },
+    {
+      "date": "2017-01-24",
+      "control_rate": 0.11800745871070857,
+      "treatment_rate": 0.12170605813637599
+    }
+  ]
+}

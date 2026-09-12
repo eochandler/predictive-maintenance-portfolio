@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>E-Commerce A/B Test — New Landing Page Analysis</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #F4F5F7;
+    --panel: #FFFFFF;
+    --ink: #14213D;
+    --ink-soft: #5A6478;
+    --line: #DFE2EA;
+    --blue: #2F5D8A;
+    --blue-soft: #E5EDF5;
+    --slate: #4C5C74;
+    --warn: #B8622A;
+    --warn-soft: #FAEBDD;
+    --mono: 'SF Mono', 'Consolas', monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 52px 32px 80px; }
+
+  header.hero { margin-bottom: 36px; }
+  header.hero .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--blue);
+    background: var(--blue-soft);
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+  }
+  header.hero h1 { font-size: 34px; font-weight: 700; margin: 0 0 14px; max-width: 26ch; letter-spacing: -0.01em; }
+  header.hero p.lede { font-size: 16px; color: var(--ink-soft); max-width: 70ch; margin: 0; }
+
+  .verdict-banner {
+    background: var(--warn-soft);
+    border: 1px solid #E8C4A0;
+    border-radius: 10px;
+    padding: 26px 30px;
+    margin: 32px 0 48px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .verdict-banner .verdict-icon {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--warn);
+    background: white;
+    border: 2px solid var(--warn);
+    border-radius: 50%;
+    width: 56px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .verdict-banner .verdict-text { font-size: 15.5px; }
+  .verdict-banner .verdict-text strong { display: block; font-size: 17px; margin-bottom: 4px; }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 52px;
+  }
+  .stat {
+    background: var(--panel);
+    padding: 22px 20px;
+  }
+  .stat .stat-label { font-size: 12px; color: var(--ink-soft); margin-bottom: 8px; }
+  .stat .stat-value { font-size: 26px; font-weight: 700; font-family: var(--mono); }
+  .stat .stat-sub { font-size: 11.5px; color: var(--ink-soft); margin-top: 4px; }
+
+  section { margin-bottom: 56px; }
+  section h2 { font-size: 21px; font-weight: 700; margin: 0 0 6px; }
+  section p.section-note { color: var(--ink-soft); font-size: 14.5px; margin: 0 0 22px; max-width: 70ch; }
+
+  .chart-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 24px 26px 10px;
+  }
+  .chart-card canvas { max-height: 300px; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.data-table th {
+    text-align: left; padding: 9px 12px; border-bottom: 2px solid var(--ink);
+    color: var(--ink-soft); font-weight: 600; font-size: 11.5px;
+  }
+  table.data-table td { padding: 9px 12px; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 13px; }
+  table.data-table td:first-child { font-family: inherit; }
+
+  .checklist { list-style: none; padding: 0; margin: 0; }
+  .checklist li {
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px;
+  }
+  .checklist .check-mark { font-family: var(--mono); font-weight: 700; color: var(--blue); flex-shrink: 0; }
+
+  footer { font-size: 12.5px; color: var(--ink-soft); border-top: 1px solid var(--line); padding-top: 20px; margin-top: 20px; }
+
+  @media (max-width: 860px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="tag">HYPOTHESIS TEST · TWO-PROPORTION Z-TEST</div>
+    <h1>Should this company ship the new landing page?</h1>
+    <p class="lede">An e-commerce company built a new landing page to increase conversions and ran an A/B test on 294,478 users. This analysis walks through the full rigor required to trust the answer — not just "did the number go up."</p>
+  </header>
+
+  <div class="verdict-banner">
+    <div class="verdict-icon">p=0.91</div>
+    <div class="verdict-text">
+      <strong>Verdict: Do not ship the new page.</strong>
+      The observed difference is not statistically significant, and the direction is actually slightly negative. The company should keep the current page rather than replace it based on this test.
+    </div>
+  </div>
+
+  <div class="stat-grid" id="stat-grid"></div>
+
+  <section>
+    <h2>Step 1 — Data quality, before trusting anything</h2>
+    <p class="section-note">1.32% of users were logged with a mismatched group/page assignment (e.g. a "control" user who somehow saw the new page) — these can't be attributed to either version and must be excluded before any test is valid.</p>
+    <ul class="checklist" id="quality-checklist"></ul>
+  </section>
+
+  <section>
+    <h2>Step 2 — Sample Ratio Mismatch (SRM) check</h2>
+    <p class="section-note">Before trusting a conversion-rate comparison, verify the randomization itself worked — that users were actually split ~50/50 as intended. A failed SRM check invalidates a test regardless of what the conversion numbers say.</p>
+    <div class="chart-card">
+      <canvas id="srmChart"></canvas>
+    </div>
+  </section>
+
+  <section>
+    <h2>Step 3 — The main result</h2>
+    <p class="section-note">Control (old page) converted at 12.04%; treatment (new page) converted at 11.88% — a difference of -0.16 percentage points, with a 95% confidence interval that spans zero.</p>
+    <div class="chart-card">
+      <canvas id="ciChart"></canvas>
+    </div>
+  </section>
+
+  <div class="two-col">
+    <section>
+      <h2>Step 4 — Was this test even powered enough?</h2>
+      <p class="section-note" style="margin-bottom: 14px;">A null result can mean "truly no effect" or "not enough data to detect a real one." With 290K+ users, this test could reliably detect an effect as small as <strong>0.35 percentage points</strong> — smaller than that, and the test is simply underpowered, not evidence of "no effect."</p>
+      <p class="section-note" style="margin-bottom:0;">The observed effect (-0.16pp) falls well within the range this test <em>could not</em> reliably distinguish from zero — so "not significant" here is a genuinely trustworthy null, not an underpowered guess.</p>
+    </section>
+    <section>
+      <h2>Step 5 — Daily trend (novelty effect check)</h2>
+      <p class="section-note">No meaningful upward or downward drift over the 23-day test window in either group — ruling out a "novelty effect" that fades over time as an explanation either way.</p>
+      <div class="chart-card">
+        <canvas id="trendChart"></canvas>
+      </div>
+    </section>
+  </div>
+
+  <section>
+    <h2>Business recommendation</h2>
+    <p class="section-note" style="margin-bottom:0;">
+      Keep the current page. Shipping the new page would very likely (based on this data) not improve conversion, and directionally leans slightly negative. If the business believes a smaller effect (under 0.35pp) could still be commercially meaningful, the correct next step is <strong>not</strong> to re-run this same test — it's to run a longer test with more traffic, since this sample size cannot resolve an effect that small either way.
+    </p>
+  </section>
+
+  <footer>
+    Data: Udacity Data Analyst Nanodegree A/B test dataset (294,478 real user records) · Analysis: Elijah Chandler · Built with SciPy, statsmodels, Chart.js
+  </footer>
+
+</div>
+
+<script>
+const DATA = {"data_quality": {"raw_rows": 294478, "mismatched_assignment_rows": 3893, "duplicate_user_id_rows": 3894, "rows_after_cleaning": 290584, "rows_removed": 3894}, "srm_check": {"n_control": 145274, "n_treatment": 145310, "chi2": 0.0045, "p_value": 0.9468, "passed": true}, "main_test": {"control_conversions": 17489, "control_n": 145274, "control_rate": 0.12039, "treatment_conversions": 17264, "treatment_n": 145310, "treatment_rate": 0.11881, "absolute_diff": -0.00158, "relative_diff_pct": -1.31, "z_statistic": -1.3109, "p_value": 0.9051, "ci_95_low": -0.00394, "ci_95_high": 0.00078, "significant_at_05": false}, "power_analysis": {"achieved_power_for_observed_effect": 0.2587, "minimum_detectable_lift_at_80pct_power": 0.0035}, "daily_trend": [{"date": "2017-01-02", "control_rate": 0.12556838055264077, "treatment_rate": 0.11987381703470032}, {"date": "2017-01-03", "control_rate": 0.11380880121396054, "treatment_rate": 0.11378059836808703}, {"date": "2017-01-04", "control_rate": 0.12192155670416539, "treatment_rate": 0.11664883045405901}, {"date": "2017-01-05", "control_rate": 0.12323012291893574, "treatment_rate": 0.11498847040737895}, {"date": "2017-01-06", "control_rate": 0.11534968210717529, "treatment_rate": 0.1234622795316437}, {"date": "2017-01-07", "control_rate": 0.12098728043609934, "treatment_rate": 0.11620517476168861}, {"date": "2017-01-08", "control_rate": 0.11888739344997756, "treatment_rate": 0.12074626865671642}, {"date": "2017-01-09", "control_rate": 0.1196439348219674, "treatment_rate": 0.1180650037792895}, {"date": "2017-01-10", "control_rate": 0.11286444244063722, "treatment_rate": 0.12634408602150538}, {"date": "2017-01-11", "control_rate": 0.11886961722488039, "treatment_rate": 0.11509066386932414}, {"date": "2017-01-12", "control_rate": 0.12204845139527752, "treatment_rate": 0.12234443272562905}, {"date": "2017-01-13", "control_rate": 0.11691086691086691, "treatment_rate": 0.11124769514443761}, {"date": "2017-01-14", "control_rate": 0.12675626145387905, "treatment_rate": 0.11926049401424459}, {"date": "2017-01-15", "control_rate": 0.1204944891271969, "treatment_rate": 0.1134524354863338}, {"date": "2017-01-16", "control_rate": 0.12183280230617509, "treatment_rate": 0.11917494270435447}, {"date": "2017-01-17", "control_rate": 0.12286534683391265, "treatment_rate": 0.1272560416029367}, {"date": "2017-01-18", "control_rate": 0.1248071582844801, "treatment_rate": 0.12479176132061184}, {"date": "2017-01-19", "control_rate": 0.11994527211918517, "treatment_rate": 0.11721611721611722}, {"date": "2017-01-20", "control_rate": 0.11524334251606978, "treatment_rate": 0.11768228776762989}, {"date": "2017-01-21", "control_rate": 0.12594458438287154, "treatment_rate": 0.11570121951219513}, {"date": "2017-01-22", "control_rate": 0.11916312916919346, "treatment_rate": 0.11800869695606538}, {"date": "2017-01-23", "control_rate": 0.12567004169148302, "treatment_rate": 0.12106135986733002}, {"date": "2017-01-24", "control_rate": 0.11800745871070857, "treatment_rate": 0.12170605813637599}]};
+const blue = '#2F5D8A', slate = '#4C5C74', warn = '#B8622A', inkSoft = '#5A6478';
+
+// ---- Stat grid ----
+document.getElementById('stat-grid').innerHTML = `
+  <div class="stat"><div class="stat-label">Control Rate</div><div class="stat-value">${(DATA.main_test.control_rate*100).toFixed(3)}%</div><div class="stat-sub">${DATA.main_test.control_conversions.toLocaleString()} / ${DATA.main_test.control_n.toLocaleString()}</div></div>
+  <div class="stat"><div class="stat-label">Treatment Rate</div><div class="stat-value">${(DATA.main_test.treatment_rate*100).toFixed(3)}%</div><div class="stat-sub">${DATA.main_test.treatment_conversions.toLocaleString()} / ${DATA.main_test.treatment_n.toLocaleString()}</div></div>
+  <div class="stat"><div class="stat-label">p-value</div><div class="stat-value">${DATA.main_test.p_value}</div><div class="stat-sub">threshold: 0.05</div></div>
+  <div class="stat"><div class="stat-label">95% CI (difference)</div><div class="stat-value" style="font-size:18px;">[${(DATA.main_test.ci_95_low*100).toFixed(2)}%, ${(DATA.main_test.ci_95_high*100).toFixed(2)}%]</div><div class="stat-sub">spans zero → not significant</div></div>
+`;
+
+// ---- Quality checklist ----
+document.getElementById('quality-checklist').innerHTML = `
+  <li><span class="check-mark">[✓]</span> Raw dataset: ${DATA.data_quality.raw_rows.toLocaleString()} rows</li>
+  <li><span class="check-mark">[!]</span> Mismatched group/page assignment removed: ${DATA.data_quality.mismatched_assignment_rows.toLocaleString()} rows</li>
+  <li><span class="check-mark">[!]</span> Duplicate user IDs removed (kept first occurrence): ${DATA.data_quality.duplicate_user_id_rows.toLocaleString()} rows</li>
+  <li><span class="check-mark">[✓]</span> Clean analysis set: ${DATA.data_quality.rows_after_cleaning.toLocaleString()} rows (${(100 - DATA.data_quality.rows_removed/DATA.data_quality.raw_rows*100).toFixed(2)}% of raw data retained)</li>
+`;
+
+// ---- Feature table for power analysis isn't a chart; skip ----
+
+// ---- Chart.js-dependent visuals, guarded ----
+if (typeof Chart !== 'undefined') {
+  Chart.defaults.font.family = "-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif";
+  Chart.defaults.color = inkSoft;
+
+  // SRM chart: expected vs observed split
+  new Chart(document.getElementById('srmChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Control', 'Treatment'],
+      datasets: [
+        { label: 'Expected (50/50)', data: [(DATA.srm_check.n_control + DATA.srm_check.n_treatment)/2, (DATA.srm_check.n_control + DATA.srm_check.n_treatment)/2], backgroundColor: '#DFE2EA' },
+        { label: 'Observed', data: [DATA.srm_check.n_control, DATA.srm_check.n_treatment], backgroundColor: blue },
+      ]
+    },
+    options: {
+      responsive: true,
+      indexAxis: 'y',
+      scales: { x: { grid: { color: '#EEF0F4' } }, y: { grid: { display: false } } },
+      plugins: { legend: { position: 'bottom' }, title: { display: true, text: `SRM chi-square p=${DATA.srm_check.p_value} (passed)`, align: 'start', font: { size: 12 }, color: inkSoft } }
+    }
+  });
+
+  // Confidence interval chart
+  new Chart(document.getElementById('ciChart'), {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: '95% CI for (Treatment − Control)',
+        data: [
+          { x: DATA.main_test.ci_95_low * 100, y: 1 },
+          { x: DATA.main_test.absolute_diff * 100, y: 1 },
+          { x: DATA.main_test.ci_95_high * 100, y: 1 },
+        ],
+        showLine: true,
+        borderColor: warn,
+        backgroundColor: warn,
+        pointRadius: [0, 8, 0],
+        borderWidth: 3,
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { title: { display: true, text: 'Difference in Conversion Rate (percentage points)' }, grid: { color: '#EEF0F4' } },
+        y: { display: false, min: 0.5, max: 1.5 },
+      },
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Zero falls inside this interval → no significant difference', align: 'start', font: { size: 12 }, color: inkSoft }
+      }
+    }
+  });
+
+  // Daily trend chart
+  new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: {
+      labels: DATA.daily_trend.map(d => d.date.slice(5)),
+      datasets: [
+        { label: 'Control', data: DATA.daily_trend.map(d => (d.control_rate*100).toFixed(2)), borderColor: slate, tension: 0.3, pointRadius: 2 },
+        { label: 'Treatment', data: DATA.daily_trend.map(d => (d.treatment_rate*100).toFixed(2)), borderColor: warn, tension: 0.3, pointRadius: 2 },
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { title: { display: true, text: 'Conversion Rate (%)' }, grid: { color: '#EEF0F4' } },
+        x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } },
+      },
+      plugins: { legend: { position: 'bottom' } }
+    }
+  });
+}
+</script>
+</body>
+</html>

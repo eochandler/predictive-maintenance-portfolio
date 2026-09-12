@@ -22,6 +22,8 @@ website:
             href: projects/olist-dashboard.qmd
           - text: "Churn Prediction"
             href: projects/churn-prediction.qmd
+          - text: "A/B Testing Analysis"
+            href: projects/ab-testing.qmd
 
 
 format:

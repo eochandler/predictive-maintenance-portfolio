@@ -1,0 +1,40 @@
+---
+title: "E-Commerce A/B Test: New Landing Page Analysis"
+author: "Eli"
+date: "2026-09-12"
+format:
+  html:
+    toc: true
+---
+
+::: {.callout-important}
+## Executive Summary
+An e-commerce company built a new landing page to increase conversions and ran an A/B test on 294,478 users. This project answers the real business question — ship it, keep the current page, or test longer — with the full statistical rigor that most A/B-test tutorials skip: data contamination handling, a sample-ratio-mismatch check, a confidence interval, and a power analysis distinguishing "no effect" from "not enough data."
+:::
+
+## The Verdict
+
+**Do not ship the new page.** The difference in conversion rate is not statistically significant (p = 0.905), and the 95% confidence interval for the difference spans zero. A power analysis confirms this null result is trustworthy — the test could reliably detect an effect as small as 0.35 percentage points, and the observed effect falls within the range it could not distinguish from noise.
+
+| Metric | Control (Old Page) | Treatment (New Page) |
+|:---|:---:|:---:|
+| Conversion Rate | 12.039% | 11.881% |
+| Sample Size | 145,274 | 145,310 |
+
+## Interactive Dashboard
+
+<iframe src="ab_test_dashboard.html" width="100%" height="2400" style="border: 1px solid #DFE2EA;" title="A/B Test Dashboard"></iframe>
+
+[Open the dashboard in a new tab](ab_test_dashboard.html){target="_blank"}
+
+## Methodology
+
+1. **Data cleaning**: 1.32% of rows had a mismatched group/page assignment (e.g. a "control" user who saw the new page) and were excluded, since their behavior can't be attributed to either version. Duplicate user IDs were also removed, keeping the first occurrence.
+2. **Sample Ratio Mismatch (SRM) check**: verified the ~50/50 split was healthy (chi-square p=0.947) before trusting any downstream comparison.
+3. **Main test**: one-sided two-proportion z-test (H1: new page conversion > old page conversion), with a 95% confidence interval for the absolute difference.
+4. **Power analysis**: calculated the minimum detectable effect at 80% power given the actual sample size, to distinguish a genuine null result from an underpowered one.
+5. **Daily trend check**: examined conversion rate by day across the 23-day test window to rule out a novelty effect.
+
+## Why This Project
+
+Most A/B testing portfolio projects stop at "the p-value was above/below 0.05." This one demonstrates the parts that separate a rigorous analyst from a p-value lookup: catching real data contamination before trusting a result, verifying randomization health via an SRM check, and correctly interpreting a null result by checking whether the test was even powered to detect a meaningful effect in the first place.

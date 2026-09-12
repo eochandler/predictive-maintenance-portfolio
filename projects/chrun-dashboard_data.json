@@ -1,0 +1,352 @@
+{
+  "data_quality": {
+    "total_customers": 7043,
+    "blank_total_charges_rows": 11,
+    "overall_churn_rate": 26.54
+  },
+  "segments": [
+    {
+      "segment": 0,
+      "customers": 1557,
+      "avg_tenure": 10.27,
+      "avg_services": 1.26,
+      "avg_monthly_charge": 29.89,
+      "churn_rate": 0.24,
+      "label": "New Low-Engagement"
+    },
+    {
+      "segment": 1,
+      "customers": 2144,
+      "avg_tenure": 56.78,
+      "avg_services": 5.77,
+      "avg_monthly_charge": 92.1,
+      "churn_rate": 0.16,
+      "label": "Loyal High-Value"
+    },
+    {
+      "segment": 2,
+      "customers": 2315,
+      "avg_tenure": 14.79,
+      "avg_services": 3.22,
+      "avg_monthly_charge": 77.6,
+      "churn_rate": 0.47,
+      "label": "New & At-Risk"
+    },
+    {
+      "segment": 3,
+      "customers": 1027,
+      "avg_tenure": 54.56,
+      "avg_services": 1.85,
+      "avg_monthly_charge": 31.63,
+      "churn_rate": 0.05,
+      "label": "Loyal Low-Spend"
+    }
+  ],
+  "model_comparison": {
+    "logistic_regression": {
+      "auc": 0.844,
+      "precision": 0.649,
+      "recall": 0.559,
+      "f1": 0.601
+    },
+    "random_forest": {
+      "auc": 0.842,
+      "precision": 0.673,
+      "recall": 0.471,
+      "f1": 0.554
+    }
+  },
+  "feature_importance": [
+    {
+      "feature": "Contract",
+      "importance": 0.16433065379343492
+    },
+    {
+      "feature": "tenure",
+      "importance": 0.1638708913096001
+    },
+    {
+      "feature": "TotalCharges",
+      "importance": 0.12378286430137485
+    },
+    {
+      "feature": "MonthlyCharges",
+      "importance": 0.11620703865944058
+    },
+    {
+      "feature": "OnlineSecurity",
+      "importance": 0.08316595871254862
+    },
+    {
+      "feature": "TechSupport",
+      "importance": 0.07339698411026045
+    },
+    {
+      "feature": "InternetService",
+      "importance": 0.05941426188390274
+    },
+    {
+      "feature": "PaymentMethod",
+      "importance": 0.03657302066243451
+    },
+    {
+      "feature": "OnlineBackup",
+      "importance": 0.03256440094222463
+    },
+    {
+      "feature": "PaperlessBilling",
+      "importance": 0.02622458898297443
+    }
+  ],
+  "cost_optimization": {
+    "retention_offer_cost": 100,
+    "test_set_size": 1761,
+    "no_model_cost": 411784.8,
+    "default_threshold_cost": 201514.8,
+    "optimal_threshold": 0.142,
+    "optimal_cost": 128195.6,
+    "savings_vs_no_model": 283589.2,
+    "savings_vs_default": 73319.2,
+    "threshold_curve": [
+      {
+        "threshold": 0.05,
+        "cost": 133121.8
+      },
+      {
+        "threshold": 0.068,
+        "cost": 130147.0
+      },
+      {
+        "threshold": 0.087,
+        "cost": 130675.6
+      },
+      {
+        "threshold": 0.105,
+        "cost": 128949.8
+      },
+      {
+        "threshold": 0.123,
+        "cost": 129733.2
+      },
+      {
+        "threshold": 0.142,
+        "cost": 128195.6
+      },
+      {
+        "threshold": 0.16,
+        "cost": 130665.6
+      },
+      {
+        "threshold": 0.179,
+        "cost": 132076.6
+      },
+      {
+        "threshold": 0.197,
+        "cost": 131102.8
+      },
+      {
+        "threshold": 0.215,
+        "cost": 131549.8
+      },
+      {
+        "threshold": 0.234,
+        "cost": 134877.0
+      },
+      {
+        "threshold": 0.252,
+        "cost": 137995.4
+      },
+      {
+        "threshold": 0.27,
+        "cost": 142304.2
+      },
+      {
+        "threshold": 0.289,
+        "cost": 146426.0
+      },
+      {
+        "threshold": 0.307,
+        "cost": 151912.8
+      },
+      {
+        "threshold": 0.326,
+        "cost": 155770.0
+      },
+      {
+        "threshold": 0.344,
+        "cost": 159569.2
+      },
+      {
+        "threshold": 0.362,
+        "cost": 161775.0
+      },
+      {
+        "threshold": 0.381,
+        "cost": 164156.2
+      },
+      {
+        "threshold": 0.399,
+        "cost": 168698.2
+      },
+      {
+        "threshold": 0.417,
+        "cost": 174848.2
+      },
+      {
+        "threshold": 0.436,
+        "cost": 181535.0
+      },
+      {
+        "threshold": 0.454,
+        "cost": 186081.8
+      },
+      {
+        "threshold": 0.472,
+        "cost": 194430.4
+      },
+      {
+        "threshold": 0.491,
+        "cost": 200624.2
+      },
+      {
+        "threshold": 0.509,
+        "cost": 206506.6
+      },
+      {
+        "threshold": 0.528,
+        "cost": 219030.8
+      },
+      {
+        "threshold": 0.546,
+        "cost": 230470.4
+      },
+      {
+        "threshold": 0.564,
+        "cost": 243471.2
+      },
+      {
+        "threshold": 0.583,
+        "cost": 250724.4
+      },
+      {
+        "threshold": 0.601,
+        "cost": 264456.4
+      },
+      {
+        "threshold": 0.619,
+        "cost": 275621.8
+      },
+      {
+        "threshold": 0.638,
+        "cost": 291289.8
+      },
+      {
+        "threshold": 0.656,
+        "cost": 302825.0
+      },
+      {
+        "threshold": 0.674,
+        "cost": 319765.0
+      },
+      {
+        "threshold": 0.693,
+        "cost": 339648.2
+      },
+      {
+        "threshold": 0.711,
+        "cost": 349255.4
+      },
+      {
+        "threshold": 0.73,
+        "cost": 362742.8
+      },
+      {
+        "threshold": 0.748,
+        "cost": 373331.6
+      },
+      {
+        "threshold": 0.766,
+        "cost": 388607.4
+      },
+      {
+        "threshold": 0.785,
+        "cost": 398531.6
+      },
+      {
+        "threshold": 0.803,
+        "cost": 401379.8
+      },
+      {
+        "threshold": 0.821,
+        "cost": 408574.8
+      },
+      {
+        "threshold": 0.84,
+        "cost": 410743.6
+      },
+      {
+        "threshold": 0.858,
+        "cost": 411784.8
+      },
+      {
+        "threshold": 0.877,
+        "cost": 411784.8
+      },
+      {
+        "threshold": 0.895,
+        "cost": 411784.8
+      },
+      {
+        "threshold": 0.913,
+        "cost": 411784.8
+      },
+      {
+        "threshold": 0.932,
+        "cost": 411784.8
+      },
+      {
+        "threshold": 0.95,
+        "cost": 411784.8
+      }
+    ]
+  },
+  "churn_by_contract": [
+    {
+      "contract_type": "Month-to-month",
+      "churn_rate": 0.427,
+      "customer_count": 3875
+    },
+    {
+      "contract_type": "One year",
+      "churn_rate": 0.113,
+      "customer_count": 1473
+    },
+    {
+      "contract_type": "Two year",
+      "churn_rate": 0.028,
+      "customer_count": 1695
+    }
+  ],
+  "churn_by_tenure": [
+    {
+      "tenure_bucket": "0-12 mo",
+      "churn_rate": 0.474,
+      "customer_count": 2186
+    },
+    {
+      "tenure_bucket": "13-24 mo",
+      "churn_rate": 0.287,
+      "customer_count": 1024
+    },
+    {
+      "tenure_bucket": "25-48 mo",
+      "churn_rate": 0.204,
+      "customer_count": 1594
+    },
+    {
+      "tenure_bucket": "49+ mo",
+      "churn_rate": 0.095,
+      "customer_count": 2239
+    }
+  ]
+}

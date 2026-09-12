@@ -27,6 +27,7 @@ See the [Methodology & Limitations](projects/methodology.qmd) page for how these
 | **[3. Maintenance Cost & ROI Model](projects/maintenance-roi.qmd)** | Financial Optimization | Python, Cost Matrix Tuning, Scikit-learn | Formulated a decision engine that tunes model classification thresholds — using real predictions from Project 1 — to minimize total operational costs vs. run-to-failure baseline policies. |
 | **[4. Olist Marketplace BI Dashboard](projects/olist-dashboard.qmd)** | Business Intelligence | SQL (DuckDB), Chart.js, HTML | Answered a stakeholder question — where is the marketplace losing revenue and satisfaction in the delivery pipeline — using SQL run directly against 96K real orders. Found that late delivery drops review scores by 1.73 points. |
 | **[5. Telco Customer Churn Prediction](projects/churn-prediction.qmd)** | Business Analytics | scikit-learn, KMeans, Chart.js | Compared two models and built a per-customer cost-optimized retention threshold — saving $283K vs. no program and $73K vs. a naive 0.50 cutoff on a 7,043-customer dataset. |
+| **[6. E-Commerce A/B Test Analysis](projects/ab-testing.qmd)** | Experimentation | SciPy, statsmodels, Chart.js | Ran a full-rigor A/B test analysis on 294K real users — data contamination handling, sample-ratio-mismatch check, confidence intervals, and a power analysis. Verdict: do not ship the tested page. |
 ---
 
 ## Technical Skills & Architecture
@@ -37,3 +38,4 @@ See the [Methodology & Limitations](projects/methodology.qmd) page for how these
 * **Languages & Core Tooling:** Python (Pandas, NumPy, Scikit-learn), SQL (DuckDB), Quarto, Git, Markdown
 * **Machine Learning & Analytics:** Feature Engineering, Survival Modeling, LightGBM, Cost-Sensitive Learning, Classification Threshold Optimization, Held-Out Validation, Customer Segmentation (KMeans), Logistic Regression / Random Forest Comparison
 * **Visualization & Deployment:** Interactive Plotly & Chart.js Dashboards, Streamlit Web Applications, GitHub Pages
+* **Statistics & Experimentation:** Hypothesis Testing, Two-Proportion Z-Tests, Confidence Intervals, Statistical Power Analysis, Sample Ratio Mismatch Detection

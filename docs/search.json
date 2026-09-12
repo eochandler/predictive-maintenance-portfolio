@@ -81,7 +81,7 @@
     "href": "projects/nasa-rul.html#feature-importance-interpretation",
     "title": "NASA Turbofan RUL Prediction",
     "section": "6. Feature Importance & Interpretation",
-    "text": "6. Feature Importance & Interpretation\nWe analyze which engineered sensor features contribute most to predicting engine failure:\n\n\nCode\n# Compute feature importance dataframe\nimportance_df = pd.DataFrame({\n    'feature': all_feature_cols,\n    'importance': model.feature_importances_\n}).sort_values('importance', ascending=False).head(10)\n\n# Plot top 10 features\nplt.figure(figsize=(10, 4))\nsns.barplot(\n    data=importance_df,\n    x='importance',\n    y='feature',\n    palette='Blues_r'\n)\n\nplt.title('Top 10 Feature Importances (LightGBM)', fontsize=14)\nplt.xlabel('Importance (Split Count)', fontsize=12)\nplt.ylabel('Feature', fontsize=12)\nplt.tight_layout()\n\nplt.show()\n\n\n/var/folders/4v/t8g5pky96fx4y8yx3trhylz40000gn/T/ipykernel_57951/2889105876.py:9: FutureWarning: \n\nPassing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `y` variable to `hue` and set `legend=False` for the same effect.\n\n  sns.barplot(\n\n\n\n\n\n\n\n\nFigure 3: Top 10 most influential features in the LightGBM RUL model."
+    "text": "6. Feature Importance & Interpretation\nWe analyze which engineered sensor features contribute most to predicting engine failure:\n\n\nCode\n# Compute feature importance dataframe\nimportance_df = pd.DataFrame({\n    'feature': all_feature_cols,\n    'importance': model.feature_importances_\n}).sort_values('importance', ascending=False).head(10)\n\n# Plot top 10 features\nplt.figure(figsize=(10, 4))\nsns.barplot(\n    data=importance_df,\n    x='importance',\n    y='feature',\n    palette='Blues_r'\n)\n\nplt.title('Top 10 Feature Importances (LightGBM)', fontsize=14)\nplt.xlabel('Importance (Split Count)', fontsize=12)\nplt.ylabel('Feature', fontsize=12)\nplt.tight_layout()\n\nplt.show()\n\n\n/var/folders/4v/t8g5pky96fx4y8yx3trhylz40000gn/T/ipykernel_62297/2889105876.py:9: FutureWarning: \n\nPassing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `y` variable to `hue` and set `legend=False` for the same effect.\n\n  sns.barplot(\n\n\n\n\n\n\n\n\nFigure 3: Top 10 most influential features in the LightGBM RUL model."
   },
   {
     "objectID": "projects/nasa-rul.html#executive-summary-next-steps",
@@ -91,25 +91,39 @@
     "text": "7. Executive Summary & Next Steps\n\n\n\n\n\n\nTipBusiness Value\n\n\n\nThis pipeline enables condition-based maintenance scheduling, allowing operations teams to service engine units before failure occurs while maximizing overall component lifespan. Performance is validated on held-out engines, giving operations teams a defensible basis for scheduling decisions.\n\n\nKey Model Takeaways * Primary Failure Drivers: Sensor 11 (s_11) and Sensor 4 (s_4) rolling means carry over 40% of overall model decision weight. * Validated Generalization: R² of 0.80 on 100 held-out engines the model never trained on, closely matching in-sample performance (R² 0.83) — indicating the model isn’t overfit.\nNext Steps & Iterations * Multi-Condition Evaluation: Extend model training across NASA CMAPSS dataset variants with complex operating environments (FD002, FD004). * LSTM Architecture: Benchmark LightGBM performance against a Deep Learning Recurrent Neural Network (LSTM) to evaluate sequential memory gains. * See the Methodology & Limitations page for known constraints and scope."
   },
   {
-    "objectID": "projects/pdm-dashboard.html",
-    "href": "projects/pdm-dashboard.html",
-    "title": "Real-Time Sensor Anomaly & Alerting Dashboard",
+    "objectID": "projects/ab-testing.html",
+    "href": "projects/ab-testing.html",
+    "title": "E-Commerce A/B Test: New Landing Page Analysis",
     "section": "",
-    "text": "🚀 Live App Available: Click here to launch the interactive Streamlit Dashboard"
+    "text": "ImportantExecutive Summary\n\n\n\nAn e-commerce company built a new landing page to increase conversions and ran an A/B test on 294,478 users. This project answers the real business question — ship it, keep the current page, or test longer — with the full statistical rigor that most A/B-test tutorials skip: data contamination handling, a sample-ratio-mismatch check, a confidence interval, and a power analysis distinguishing “no effect” from “not enough data.”"
   },
   {
-    "objectID": "projects/pdm-dashboard.html#project-overview",
-    "href": "projects/pdm-dashboard.html#project-overview",
-    "title": "Real-Time Sensor Anomaly & Alerting Dashboard",
-    "section": "Project Overview",
-    "text": "Project Overview\nIn industrial environments, predictive models cannot stay hidden in static notebooks. Maintenance engineers require real-time visual telemetry and automated anomaly alerts to prevent catastrophic equipment downtime.\nThis project implements an interactive monitoring dashboard simulating live sensor streams from industrial assets."
+    "objectID": "projects/ab-testing.html#the-verdict",
+    "href": "projects/ab-testing.html#the-verdict",
+    "title": "E-Commerce A/B Test: New Landing Page Analysis",
+    "section": "The Verdict",
+    "text": "The Verdict\nDo not ship the new page. The difference in conversion rate is not statistically significant (p = 0.905), and the 95% confidence interval for the difference spans zero. A power analysis confirms this null result is trustworthy — the test could reliably detect an effect as small as 0.35 percentage points, and the observed effect falls within the range it could not distinguish from noise.\n\n\n\nMetric\nControl (Old Page)\nTreatment (New Page)\n\n\n\n\nConversion Rate\n12.039%\n11.881%\n\n\nSample Size\n145,274\n145,310"
   },
   {
-    "objectID": "projects/pdm-dashboard.html#key-features",
-    "href": "projects/pdm-dashboard.html#key-features",
-    "title": "Real-Time Sensor Anomaly & Alerting Dashboard",
-    "section": "Key Features",
-    "text": "Key Features\n\nLive Telemetry Stream: Simulates incoming IoT telemetry streams for air temperature, rotational speed, torque, and tool wear.\nAutomated Threshold Alerting: Dynamic warning banners trigger when thermal or torque operational safety limits are breached.\nEquipment Health Index: Tracks continuous machine degradation on a visual gauge chart."
+    "objectID": "projects/ab-testing.html#interactive-dashboard",
+    "href": "projects/ab-testing.html#interactive-dashboard",
+    "title": "E-Commerce A/B Test: New Landing Page Analysis",
+    "section": "Interactive Dashboard",
+    "text": "Interactive Dashboard\n\n\nOpen the dashboard in a new tab"
+  },
+  {
+    "objectID": "projects/ab-testing.html#methodology",
+    "href": "projects/ab-testing.html#methodology",
+    "title": "E-Commerce A/B Test: New Landing Page Analysis",
+    "section": "Methodology",
+    "text": "Methodology\n\nData cleaning: 1.32% of rows had a mismatched group/page assignment (e.g. a “control” user who saw the new page) and were excluded, since their behavior can’t be attributed to either version. Duplicate user IDs were also removed, keeping the first occurrence.\nSample Ratio Mismatch (SRM) check: verified the ~50/50 split was healthy (chi-square p=0.947) before trusting any downstream comparison.\nMain test: one-sided two-proportion z-test (H1: new page conversion &gt; old page conversion), with a 95% confidence interval for the absolute difference.\nPower analysis: calculated the minimum detectable effect at 80% power given the actual sample size, to distinguish a genuine null result from an underpowered one.\nDaily trend check: examined conversion rate by day across the 23-day test window to rule out a novelty effect."
+  },
+  {
+    "objectID": "projects/ab-testing.html#why-this-project",
+    "href": "projects/ab-testing.html#why-this-project",
+    "title": "E-Commerce A/B Test: New Landing Page Analysis",
+    "section": "Why This Project",
+    "text": "Why This Project\nMost A/B testing portfolio projects stop at “the p-value was above/below 0.05.” This one demonstrates the parts that separate a rigorous analyst from a p-value lookup: catching real data contamination before trusting a result, verifying randomization health via an SRM check, and correctly interpreting a null result by checking whether the test was even powered to detect a meaningful effect in the first place."
   },
   {
     "objectID": "projects/maintenance-roi.html",
@@ -159,6 +173,27 @@
     "title": "Predictive Maintenance ROI & Cost Optimization",
     "section": "6. Executive Key Results",
     "text": "6. Executive Key Results\n\n\n\n\n\n\nTipBusiness ROI Summary\n\n\n\nOn a held-out fleet of 100 engines (16 true near-failures), shifting decision thresholds from the standard default (\\(\\tau = 0.50\\)) to a cost-optimized threshold (\\(\\tau \\approx 0.59\\)) eliminates all missed failures while reducing total cost from $29,400 to $27,600.\n\n\nKey Strategic Insights * Aggressive Failure Prevention: Raising \\(\\tau\\) to the cost-optimal point eliminates all missed breakdowns (false negatives), where failure costs are \\(33\\times\\) higher than inspection costs, at the expense of a modest increase in false alarms. * Directional Validation: Both strategies dramatically outperform a reactive run-to-failure policy ($160,000 total cost on this fleet), confirming the cost-optimization approach holds up on real model output, not just simulated data.\n\n\n\n\n\n\nWarningReading These Numbers\n\n\n\nThis held-out fleet has only 100 engines and 16 true near-failures — enough to validate the method, but too small to treat the specific dollar figures or optimal threshold as a production-ready forecast. See Methodology & Limitations for details.\n\n\nNext Steps & Implementation * Validate threshold stability on a larger fleet (e.g. combining FD001-FD004) before treating \\(\\tau \\approx 0.59\\) as an operational recommendation. * Integrate dynamic threshold tuning based on seasonal fluctuations in emergency repair labor costs. * Deploy automated notifications directly to field technicians when asset failure risk exceeds the optimized threshold."
+  },
+  {
+    "objectID": "projects/pdm-dashboard.html",
+    "href": "projects/pdm-dashboard.html",
+    "title": "Real-Time Sensor Anomaly & Alerting Dashboard",
+    "section": "",
+    "text": "🚀 Live App Available: Click here to launch the interactive Streamlit Dashboard"
+  },
+  {
+    "objectID": "projects/pdm-dashboard.html#project-overview",
+    "href": "projects/pdm-dashboard.html#project-overview",
+    "title": "Real-Time Sensor Anomaly & Alerting Dashboard",
+    "section": "Project Overview",
+    "text": "Project Overview\nIn industrial environments, predictive models cannot stay hidden in static notebooks. Maintenance engineers require real-time visual telemetry and automated anomaly alerts to prevent catastrophic equipment downtime.\nThis project implements an interactive monitoring dashboard simulating live sensor streams from industrial assets."
+  },
+  {
+    "objectID": "projects/pdm-dashboard.html#key-features",
+    "href": "projects/pdm-dashboard.html#key-features",
+    "title": "Real-Time Sensor Anomaly & Alerting Dashboard",
+    "section": "Key Features",
+    "text": "Key Features\n\nLive Telemetry Stream: Simulates incoming IoT telemetry streams for air temperature, rotational speed, torque, and tool wear.\nAutomated Threshold Alerting: Dynamic warning banners trigger when thermal or torque operational safety limits are breached.\nEquipment Health Index: Tracks continuous machine degradation on a visual gauge chart."
   },
   {
     "objectID": "projects/olist-dashboard.html",
@@ -249,7 +284,7 @@
     "href": "index.html#featured-projects",
     "title": "Predictive Maintenance & Reliability Engineering Portfolio",
     "section": "Featured Projects",
-    "text": "Featured Projects\n\n\n\nProject\nDomain\nKey Technologies\nCore Deliverable & Summary\n\n\n\n\n1. NASA Turbofan RUL Forecast\nPredictive Maintenance\nPython, LightGBM, Pandas, Seaborn\nBuilt a machine learning pipeline using rolling sensor features to forecast engine failure cycles on NASA C-MAPSS telemetry data, validated on the official held-out test set.\n\n\n2. IoT Sensor Anomaly Dashboard\nReal-Time Telemetry\nStreamlit, Plotly, IoT Data Simulation\nDeveloped a live streaming dashboard with dynamic safety-threshold alerting. Includes a Live Web App Demo.\n\n\n3. Maintenance Cost & ROI Model\nFinancial Optimization\nPython, Cost Matrix Tuning, Scikit-learn\nFormulated a decision engine that tunes model classification thresholds — using real predictions from Project 1 — to minimize total operational costs vs. run-to-failure baseline policies.\n\n\n4. Olist Marketplace BI Dashboard\nBusiness Intelligence\nSQL (DuckDB), Chart.js, HTML\nAnswered a stakeholder question — where is the marketplace losing revenue and satisfaction in the delivery pipeline — using SQL run directly against 96K real orders. Found that late delivery drops review scores by 1.73 points.\n\n\n5. Telco Customer Churn Prediction\nBusiness Analytics\nscikit-learn, KMeans, Chart.js\nCompared two models and built a per-customer cost-optimized retention threshold — saving $283K vs. no program and $73K vs. a naive 0.50 cutoff on a 7,043-customer dataset."
+    "text": "Featured Projects\n\n\n\nProject\nDomain\nKey Technologies\nCore Deliverable & Summary\n\n\n\n\n1. NASA Turbofan RUL Forecast\nPredictive Maintenance\nPython, LightGBM, Pandas, Seaborn\nBuilt a machine learning pipeline using rolling sensor features to forecast engine failure cycles on NASA C-MAPSS telemetry data, validated on the official held-out test set.\n\n\n2. IoT Sensor Anomaly Dashboard\nReal-Time Telemetry\nStreamlit, Plotly, IoT Data Simulation\nDeveloped a live streaming dashboard with dynamic safety-threshold alerting. Includes a Live Web App Demo.\n\n\n3. Maintenance Cost & ROI Model\nFinancial Optimization\nPython, Cost Matrix Tuning, Scikit-learn\nFormulated a decision engine that tunes model classification thresholds — using real predictions from Project 1 — to minimize total operational costs vs. run-to-failure baseline policies.\n\n\n4. Olist Marketplace BI Dashboard\nBusiness Intelligence\nSQL (DuckDB), Chart.js, HTML\nAnswered a stakeholder question — where is the marketplace losing revenue and satisfaction in the delivery pipeline — using SQL run directly against 96K real orders. Found that late delivery drops review scores by 1.73 points.\n\n\n5. Telco Customer Churn Prediction\nBusiness Analytics\nscikit-learn, KMeans, Chart.js\nCompared two models and built a per-customer cost-optimized retention threshold — saving $283K vs. no program and $73K vs. a naive 0.50 cutoff on a 7,043-customer dataset.\n\n\n6. E-Commerce A/B Test Analysis\nExperimentation\nSciPy, statsmodels, Chart.js\nRan a full-rigor A/B test analysis on 294K real users — data contamination handling, sample-ratio-mismatch check, confidence intervals, and a power analysis. Verdict: do not ship the tested page."
   },
   {
     "objectID": "index.html#technical-skills-architecture",
@@ -263,6 +298,6 @@
     "href": "index.html#technical-skills-architecture-1",
     "title": "Predictive Maintenance & Reliability Engineering Portfolio",
     "section": "Technical Skills & Architecture",
-    "text": "Technical Skills & Architecture\n\nLanguages & Core Tooling: Python (Pandas, NumPy, Scikit-learn), SQL (DuckDB), Quarto, Git, Markdown\nMachine Learning & Analytics: Feature Engineering, Survival Modeling, LightGBM, Cost-Sensitive Learning, Classification Threshold Optimization, Held-Out Validation, Customer Segmentation (KMeans), Logistic Regression / Random Forest Comparison\nVisualization & Deployment: Interactive Plotly & Chart.js Dashboards, Streamlit Web Applications, GitHub Pages"
+    "text": "Technical Skills & Architecture\n\nLanguages & Core Tooling: Python (Pandas, NumPy, Scikit-learn), SQL (DuckDB), Quarto, Git, Markdown\nMachine Learning & Analytics: Feature Engineering, Survival Modeling, LightGBM, Cost-Sensitive Learning, Classification Threshold Optimization, Held-Out Validation, Customer Segmentation (KMeans), Logistic Regression / Random Forest Comparison\nVisualization & Deployment: Interactive Plotly & Chart.js Dashboards, Streamlit Web Applications, GitHub Pages\nStatistics & Experimentation: Hypothesis Testing, Two-Proportion Z-Tests, Confidence Intervals, Statistical Power Analysis, Sample Ratio Mismatch Detection"
   }
 ]
