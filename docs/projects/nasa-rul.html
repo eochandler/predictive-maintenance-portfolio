@@ -157,6 +157,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../projects/methodology.html">
  <span class="dropdown-text">Methodology &amp; Limitations</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../projects/olist-dashboard.html">
+ <span class="dropdown-text">Olist BI Dashboard</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -235,7 +239,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="data-ingestion-target-preparation" class="level2">
 <h2 class="anchored" data-anchor-id="data-ingestion-target-preparation">1. Data Ingestion &amp; Target Preparation</h2>
 <p>We load raw telemetry from <code>FD001</code> and calculate target <strong>Remaining Useful Life (RUL)</strong> labels. Target values are capped at 125 cycles to stabilize early-life training.</p>
-<div id="0331f75f" class="cell" data-execution_count="1">
+<div id="c1946650" class="cell" data-execution_count="1">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -329,7 +333,7 @@ Figure&nbsp;1: Sensor telemetry showing drift as Unit ID 1 approaches failure.
 <section id="lightgbm-model-training" class="level2">
 <h2 class="anchored" data-anchor-id="lightgbm-model-training">3. LightGBM Model Training</h2>
 <p>We fit a <code>LGBMRegressor</code> on our engineered rolling sensor features using standard hyperparameter baselines.</p>
-<div id="ce896f32" class="cell" data-execution_count="3">
+<div id="b9b198a9" class="cell" data-execution_count="3">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize and train LightGBM regressor</span></span>
@@ -372,7 +376,7 @@ Figure&nbsp;1: Sensor telemetry showing drift as Unit ID 1 approaches failure.
 <p>The training metrics above are <strong>in-sample</strong> — computed on the same data the model learned from, which tends to look optimistic. To get an honest read on generalization, we evaluate on NASA’s official held-out test set (<code>test_FD001.txt</code> + <code>RUL_FD001.txt</code>) — 100 engines the model never saw during training, evaluated at the exact cycle the CMAPSS test protocol specifies.</p>
 </div>
 </div>
-<div id="3ef343bf" class="cell" data-execution_count="4">
+<div id="e707f194" class="cell" data-execution_count="4">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the official held-out test set</span></span>
@@ -404,7 +408,7 @@ Figure&nbsp;1: Sensor telemetry showing drift as Unit ID 1 approaches failure.
 <pre><code>Held-Out Test Metrics -&gt; RMSE: 17.87 | MAE: 12.58 | R2: 0.80</code></pre>
 </div>
 </div>
-<div id="b0b1962d" class="cell" data-execution_count="5">
+<div id="29f8b8c8" class="cell" data-execution_count="5">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cmapss_score(y_true, y_pred):</span>
@@ -467,7 +471,7 @@ Figure&nbsp;1: Sensor telemetry showing drift as Unit ID 1 approaches failure.
 <p>The small gap between in-sample and held-out performance indicates the model generalizes reasonably well rather than having memorized the training set — but this is now a claim backed by evidence on genuinely unseen engines, not an unverified training-set number. See the <a href="../projects/methodology.html">Methodology &amp; Limitations</a> page for a full discussion of scope and constraints.</p>
 </div>
 </div>
-<div id="c76e397c" class="cell" data-execution_count="6">
+<div id="7c4634d0" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Export predictions for the ROI project</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert RUL prediction into a failure-probability signal, and save it</span></span>
@@ -553,7 +557,7 @@ Figure&nbsp;2: Actual vs.&nbsp;Predicted RUL trajectory for Unit ID 1.
 <span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/4v/t8g5pky96fx4y8yx3trhylz40000gn/T/ipykernel_24505/2889105876.py:9: FutureWarning: 
+<pre><code>/var/folders/4v/t8g5pky96fx4y8yx3trhylz40000gn/T/ipykernel_52981/2889105876.py:9: FutureWarning: 
 
 Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `y` variable to `hue` and set `legend=False` for the same effect.
 

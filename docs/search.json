@@ -35,25 +35,39 @@
     "text": "Known Limitations\n\nSingle operating condition, single fault mode. FD001 represents one operating regime (sea level) and one fault mode (HPC degradation). A model trained here would need re-validation on FD002/FD004 (multiple operating conditions) before claiming applicability to more complex real-world fleets.\nSmall held-out test set for the cost-optimization framework. The connected ROI analysis draws on 100 held-out engines with only 16 true near-failures. The specific dollar figures and optimal threshold (\\(\\tau \\approx 0.59\\)) should be read as illustrative of the method, not as a production-ready dollar forecast — a real deployment would want a much larger fleet history before setting an operational threshold.\nRUL-to-probability conversion is a simplifying heuristic. failure_probability = 1 - predicted_RUL / 125 is a reasonable but simple linear mapping. A more rigorous version would calibrate this conversion against actual observed failure rates at each predicted-RUL band, or use quantile regression to produce a genuine probabilistic estimate rather than a linear proxy.\nNo explicit group-leakage handling was needed here, since the CMAPSS train/test split is already provided pre-separated by engine — but it’s worth naming explicitly: a naive random k-fold split on this kind of engine-cycle data would leak information across train/test (adjacent cycles from the same engine landing on both sides), inflating validation scores in a way that wouldn’t hold up in deployment.\nThe cost matrix values ($1,500 / $300 / $10,000) are illustrative industry-typical figures, not sourced from a specific real fleet — a production version would calibrate these against actual historical maintenance and downtime costs for the specific asset class."
   },
   {
-    "objectID": "projects/pdm-dashboard.html",
-    "href": "projects/pdm-dashboard.html",
-    "title": "Real-Time Sensor Anomaly & Alerting Dashboard",
+    "objectID": "projects/olist-dashboard.html",
+    "href": "projects/olist-dashboard.html",
+    "title": "Olist Marketplace: Delivery Risk & Revenue Dashboard",
     "section": "",
-    "text": "🚀 Live App Available: Click here to launch the interactive Streamlit Dashboard"
+    "text": "NoteExecutive Summary\n\n\n\nThis project answers a specific stakeholder question — “where is Olist’s marketplace losing revenue and customer satisfaction in the order-to-delivery pipeline?” — using SQL (DuckDB) run directly against 96,478 real, anonymized orders from the Brazilian E-Commerce Public Dataset by Olist. Unlike the other projects on this site, this one is deliberately general-purpose: the same SQL-to-dashboard workflow applies to any business’s order/transaction data, not just industrial equipment."
   },
   {
-    "objectID": "projects/pdm-dashboard.html#project-overview",
-    "href": "projects/pdm-dashboard.html#project-overview",
-    "title": "Real-Time Sensor Anomaly & Alerting Dashboard",
-    "section": "Project Overview",
-    "text": "Project Overview\nIn industrial environments, predictive models cannot stay hidden in static notebooks. Maintenance engineers require real-time visual telemetry and automated anomaly alerts to prevent catastrophic equipment downtime.\nThis project implements an interactive monitoring dashboard simulating live sensor streams from industrial assets."
+    "objectID": "projects/olist-dashboard.html#the-core-finding",
+    "href": "projects/olist-dashboard.html#the-core-finding",
+    "title": "Olist Marketplace: Delivery Risk & Revenue Dashboard",
+    "section": "The Core Finding",
+    "text": "The Core Finding\nLate delivery is the single strongest driver of review score in this dataset — a late order drops the average review score by 1.73 points, affecting roughly 8.1% of all delivered orders.\n\n\n\nDelivery Status\nAvg. Review Score\nOrder Count\n\n\n\n\nOn Time\n4.28 / 5\n88,644\n\n\nLate\n2.55 / 5\n7,826"
   },
   {
-    "objectID": "projects/pdm-dashboard.html#key-features",
-    "href": "projects/pdm-dashboard.html#key-features",
-    "title": "Real-Time Sensor Anomaly & Alerting Dashboard",
-    "section": "Key Features",
-    "text": "Key Features\n\nLive Telemetry Stream: Simulates incoming IoT telemetry streams for air temperature, rotational speed, torque, and tool wear.\nAutomated Threshold Alerting: Dynamic warning banners trigger when thermal or torque operational safety limits are breached.\nEquipment Health Index: Tracks continuous machine degradation on a visual gauge chart."
+    "objectID": "projects/olist-dashboard.html#interactive-dashboard",
+    "href": "projects/olist-dashboard.html#interactive-dashboard",
+    "title": "Olist Marketplace: Delivery Risk & Revenue Dashboard",
+    "section": "Interactive Dashboard",
+    "text": "Interactive Dashboard\n\n\nOpen the dashboard in a new tab"
+  },
+  {
+    "objectID": "projects/olist-dashboard.html#methodology",
+    "href": "projects/olist-dashboard.html#methodology",
+    "title": "Olist Marketplace: Delivery Risk & Revenue Dashboard",
+    "section": "Methodology",
+    "text": "Methodology\nAll aggregation is done in SQL, run directly against the raw CSVs via DuckDB — no spreadsheet or pandas pre-aggregation. The six core queries (headline KPIs, delivery-vs-review correlation, monthly trends, category risk, state performance, payment breakdown) are documented in full in the project’s GitHub repository.\nKey definitions:\n\nOnly orders with status delivered are included in revenue/review figures.\n“Late” is defined as delivered after the carrier’s own estimated delivery date.\nMonths with fewer than 100 orders (partial data at the start/end of the collection window) are excluded from trend charts to avoid misleading spikes.\nCategory and state breakdowns require at least 100 / 50 orders respectively to be included, to avoid small-sample noise."
+  },
+  {
+    "objectID": "projects/olist-dashboard.html#why-this-project",
+    "href": "projects/olist-dashboard.html#why-this-project",
+    "title": "Olist Marketplace: Delivery Risk & Revenue Dashboard",
+    "section": "Why This Project",
+    "text": "Why This Project\nThe other projects on this site focus on industrial predictive maintenance. This one demonstrates the same core analytical workflow — turning raw transactional data into a specific, actionable business finding — applied to a general e-commerce/operations context, using SQL as the primary tool rather than a Python-only pipeline."
   },
   {
     "objectID": "projects/maintenance-roi.html",
@@ -105,6 +119,27 @@
     "text": "6. Executive Key Results\n\n\n\n\n\n\nTipBusiness ROI Summary\n\n\n\nOn a held-out fleet of 100 engines (16 true near-failures), shifting decision thresholds from the standard default (\\(\\tau = 0.50\\)) to a cost-optimized threshold (\\(\\tau \\approx 0.59\\)) eliminates all missed failures while reducing total cost from $29,400 to $27,600.\n\n\nKey Strategic Insights * Aggressive Failure Prevention: Raising \\(\\tau\\) to the cost-optimal point eliminates all missed breakdowns (false negatives), where failure costs are \\(33\\times\\) higher than inspection costs, at the expense of a modest increase in false alarms. * Directional Validation: Both strategies dramatically outperform a reactive run-to-failure policy ($160,000 total cost on this fleet), confirming the cost-optimization approach holds up on real model output, not just simulated data.\n\n\n\n\n\n\nWarningReading These Numbers\n\n\n\nThis held-out fleet has only 100 engines and 16 true near-failures — enough to validate the method, but too small to treat the specific dollar figures or optimal threshold as a production-ready forecast. See Methodology & Limitations for details.\n\n\nNext Steps & Implementation * Validate threshold stability on a larger fleet (e.g. combining FD001-FD004) before treating \\(\\tau \\approx 0.59\\) as an operational recommendation. * Integrate dynamic threshold tuning based on seasonal fluctuations in emergency repair labor costs. * Deploy automated notifications directly to field technicians when asset failure risk exceeds the optimized threshold."
   },
   {
+    "objectID": "projects/pdm-dashboard.html",
+    "href": "projects/pdm-dashboard.html",
+    "title": "Real-Time Sensor Anomaly & Alerting Dashboard",
+    "section": "",
+    "text": "🚀 Live App Available: Click here to launch the interactive Streamlit Dashboard"
+  },
+  {
+    "objectID": "projects/pdm-dashboard.html#project-overview",
+    "href": "projects/pdm-dashboard.html#project-overview",
+    "title": "Real-Time Sensor Anomaly & Alerting Dashboard",
+    "section": "Project Overview",
+    "text": "Project Overview\nIn industrial environments, predictive models cannot stay hidden in static notebooks. Maintenance engineers require real-time visual telemetry and automated anomaly alerts to prevent catastrophic equipment downtime.\nThis project implements an interactive monitoring dashboard simulating live sensor streams from industrial assets."
+  },
+  {
+    "objectID": "projects/pdm-dashboard.html#key-features",
+    "href": "projects/pdm-dashboard.html#key-features",
+    "title": "Real-Time Sensor Anomaly & Alerting Dashboard",
+    "section": "Key Features",
+    "text": "Key Features\n\nLive Telemetry Stream: Simulates incoming IoT telemetry streams for air temperature, rotational speed, torque, and tool wear.\nAutomated Threshold Alerting: Dynamic warning banners trigger when thermal or torque operational safety limits are breached.\nEquipment Health Index: Tracks continuous machine degradation on a visual gauge chart."
+  },
+  {
     "objectID": "projects/nasa-rul.html",
     "href": "projects/nasa-rul.html",
     "title": "NASA Turbofan RUL Prediction",
@@ -151,7 +186,7 @@
     "href": "projects/nasa-rul.html#feature-importance-interpretation",
     "title": "NASA Turbofan RUL Prediction",
     "section": "6. Feature Importance & Interpretation",
-    "text": "6. Feature Importance & Interpretation\nWe analyze which engineered sensor features contribute most to predicting engine failure:\n\n\nCode\n# Compute feature importance dataframe\nimportance_df = pd.DataFrame({\n    'feature': all_feature_cols,\n    'importance': model.feature_importances_\n}).sort_values('importance', ascending=False).head(10)\n\n# Plot top 10 features\nplt.figure(figsize=(10, 4))\nsns.barplot(\n    data=importance_df,\n    x='importance',\n    y='feature',\n    palette='Blues_r'\n)\n\nplt.title('Top 10 Feature Importances (LightGBM)', fontsize=14)\nplt.xlabel('Importance (Split Count)', fontsize=12)\nplt.ylabel('Feature', fontsize=12)\nplt.tight_layout()\n\nplt.show()\n\n\n/var/folders/4v/t8g5pky96fx4y8yx3trhylz40000gn/T/ipykernel_24505/2889105876.py:9: FutureWarning: \n\nPassing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `y` variable to `hue` and set `legend=False` for the same effect.\n\n  sns.barplot(\n\n\n\n\n\n\n\n\nFigure 3: Top 10 most influential features in the LightGBM RUL model."
+    "text": "6. Feature Importance & Interpretation\nWe analyze which engineered sensor features contribute most to predicting engine failure:\n\n\nCode\n# Compute feature importance dataframe\nimportance_df = pd.DataFrame({\n    'feature': all_feature_cols,\n    'importance': model.feature_importances_\n}).sort_values('importance', ascending=False).head(10)\n\n# Plot top 10 features\nplt.figure(figsize=(10, 4))\nsns.barplot(\n    data=importance_df,\n    x='importance',\n    y='feature',\n    palette='Blues_r'\n)\n\nplt.title('Top 10 Feature Importances (LightGBM)', fontsize=14)\nplt.xlabel('Importance (Split Count)', fontsize=12)\nplt.ylabel('Feature', fontsize=12)\nplt.tight_layout()\n\nplt.show()\n\n\n/var/folders/4v/t8g5pky96fx4y8yx3trhylz40000gn/T/ipykernel_52981/2889105876.py:9: FutureWarning: \n\nPassing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `y` variable to `hue` and set `legend=False` for the same effect.\n\n  sns.barplot(\n\n\n\n\n\n\n\n\nFigure 3: Top 10 most influential features in the LightGBM RUL model."
   },
   {
     "objectID": "projects/nasa-rul.html#executive-summary-next-steps",
@@ -179,13 +214,20 @@
     "href": "index.html#featured-projects",
     "title": "Predictive Maintenance & Reliability Engineering Portfolio",
     "section": "Featured Projects",
-    "text": "Featured Projects\n\n\n\nProject\nDomain\nKey Technologies\nCore Deliverable & Summary\n\n\n\n\n1. NASA Turbofan RUL Forecast\nPredictive Maintenance\nPython, LightGBM, Pandas, Seaborn\nBuilt a machine learning pipeline using rolling sensor features to forecast engine failure cycles on NASA C-MAPSS telemetry data, validated on the official held-out test set.\n\n\n2. IoT Sensor Anomaly Dashboard\nReal-Time Telemetry\nStreamlit, Plotly, IoT Data Simulation\nDeveloped a live streaming dashboard with dynamic safety-threshold alerting. Includes a Live Web App Demo.\n\n\n3. Maintenance Cost & ROI Model\nFinancial Optimization\nPython, Cost Matrix Tuning, Scikit-learn\nFormulated a decision engine that tunes model classification thresholds — using real predictions from Project 1 — to minimize total operational costs vs. run-to-failure baseline policies."
+    "text": "Featured Projects\n\n\n\nProject\nDomain\nKey Technologies\nCore Deliverable & Summary\n\n\n\n\n1. NASA Turbofan RUL Forecast\nPredictive Maintenance\nPython, LightGBM, Pandas, Seaborn\nBuilt a machine learning pipeline using rolling sensor features to forecast engine failure cycles on NASA C-MAPSS telemetry data, validated on the official held-out test set.\n\n\n2. IoT Sensor Anomaly Dashboard\nReal-Time Telemetry\nStreamlit, Plotly, IoT Data Simulation\nDeveloped a live streaming dashboard with dynamic safety-threshold alerting. Includes a Live Web App Demo.\n\n\n3. Maintenance Cost & ROI Model\nFinancial Optimization\nPython, Cost Matrix Tuning, Scikit-learn\nFormulated a decision engine that tunes model classification thresholds — using real predictions from Project 1 — to minimize total operational costs vs. run-to-failure baseline policies.\n\n\n4. Olist Marketplace BI Dashboard\nBusiness Intelligence\nSQL (DuckDB), Chart.js, HTML\nAnswered a stakeholder question — where is the marketplace losing revenue and satisfaction in the delivery pipeline — using SQL run directly against 96K real orders. Found that late delivery drops review scores by 1.73 points."
   },
   {
     "objectID": "index.html#technical-skills-architecture",
     "href": "index.html#technical-skills-architecture",
     "title": "Predictive Maintenance & Reliability Engineering Portfolio",
     "section": "Technical Skills & Architecture",
-    "text": "Technical Skills & Architecture\n\nLanguages & Core Tooling: Python (Pandas, NumPy, Scikit-learn), Quarto, Git, Markdown\nMachine Learning & Analytics: Feature Engineering, Survival Modeling, LightGBM, Cost-Sensitive Learning, Classification Threshold Optimization, Held-Out Validation\nVisualization & Deployment: Interactive Plotly Charts, Streamlit Web Applications, GitHub Pages"
+    "text": "Technical Skills & Architecture"
+  },
+  {
+    "objectID": "index.html#technical-skills-architecture-1",
+    "href": "index.html#technical-skills-architecture-1",
+    "title": "Predictive Maintenance & Reliability Engineering Portfolio",
+    "section": "Technical Skills & Architecture",
+    "text": "Technical Skills & Architecture\n\nLanguages & Core Tooling: Python (Pandas, NumPy, Scikit-learn), SQL (DuckDB), Quarto, Git, Markdown\nMachine Learning & Analytics: Feature Engineering, Survival Modeling, LightGBM, Cost-Sensitive Learning, Classification Threshold Optimization, Held-Out Validation\nVisualization & Deployment: Interactive Plotly & Chart.js Dashboards, Streamlit Web Applications, GitHub Pages"
   }
 ]

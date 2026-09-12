@@ -18,6 +18,9 @@ website:
             href: projects/maintenance-roi.qmd
           - text: "Methodology & Limitations"
             href: projects/methodology.qmd
+          - text: "Olist BI Dashboard"
+            href: projects/olist-dashboard.qmd
+
 
 format:
   html:

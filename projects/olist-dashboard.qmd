@@ -1,0 +1,43 @@
+---
+title: "Olist Marketplace: Delivery Risk & Revenue Dashboard"
+author: "Eli"
+date: "2026-09-12"
+format:
+  html:
+    toc: true
+---
+
+::: {.callout-note}
+## Executive Summary
+This project answers a specific stakeholder question — "where is Olist's marketplace losing revenue and customer satisfaction in the order-to-delivery pipeline?" — using SQL (DuckDB) run directly against 96,478 real, anonymized orders from the [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/olistbr/brazilian-ecommerce). Unlike the other projects on this site, this one is deliberately general-purpose: the same SQL-to-dashboard workflow applies to any business's order/transaction data, not just industrial equipment.
+:::
+
+## The Core Finding
+
+Late delivery is the single strongest driver of review score in this dataset — a late order drops the average review score by **1.73 points**, affecting roughly **8.1%** of all delivered orders.
+
+| Delivery Status | Avg. Review Score | Order Count |
+|:---|:---:|:---:|
+| On Time | 4.28 / 5 | 88,644 |
+| Late | 2.55 / 5 | 7,826 |
+
+## Interactive Dashboard
+
+<iframe src="olist_dashboard.html" width="100%" height="1600" style="border: 1px solid #D9D6CC;" title="Olist Marketplace Dashboard"></iframe>
+
+[Open the dashboard in a new tab](olist_dashboard.html){target="_blank"}
+
+## Methodology
+
+All aggregation is done in **SQL**, run directly against the raw CSVs via DuckDB — no spreadsheet or pandas pre-aggregation. The six core queries (headline KPIs, delivery-vs-review correlation, monthly trends, category risk, state performance, payment breakdown) are documented in full in the project's [GitHub repository](https://github.com/eochandler/predictive-maintenance-portfolio).
+
+Key definitions:
+
+- Only orders with status `delivered` are included in revenue/review figures.
+- "Late" is defined as delivered after the carrier's own estimated delivery date.
+- Months with fewer than 100 orders (partial data at the start/end of the collection window) are excluded from trend charts to avoid misleading spikes.
+- Category and state breakdowns require at least 100 / 50 orders respectively to be included, to avoid small-sample noise.
+
+## Why This Project
+
+The other projects on this site focus on industrial predictive maintenance. This one demonstrates the same core analytical workflow — turning raw transactional data into a specific, actionable business finding — applied to a general e-commerce/operations context, using SQL as the primary tool rather than a Python-only pipeline.

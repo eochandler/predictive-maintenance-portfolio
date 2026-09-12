@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Olist Marketplace — Delivery Risk & Revenue Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --paper: #F6F5F1;
+    --ink: #16241F;
+    --ink-soft: #48584F;
+    --line: #D9D6CC;
+    --teal: #1F6F5C;
+    --teal-soft: #E4EFEA;
+    --risk: #A6402F;
+    --risk-soft: #F5E3DE;
+    --gold: #C08A2E;
+    --gold-soft: #F3E7CE;
+    --card-bg: #FFFFFF;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    line-height: 1.5;
+  }
+  .sans { font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+
+  header.hero {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 40px;
+    align-items: end;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 28px;
+    margin-bottom: 44px;
+  }
+  header.hero h1 {
+    font-size: 42px;
+    line-height: 1.08;
+    margin: 0 0 14px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  header.hero p.lede {
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin: 0;
+  }
+  header.hero .context {
+    font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-align: right;
+  }
+  header.hero .context strong { color: var(--ink); font-size: 15px; display: block; margin-bottom: 4px; }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-bottom: 56px;
+  }
+  .kpi {
+    background: var(--card-bg);
+    padding: 26px 22px;
+  }
+  .kpi .label {
+    font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .kpi .value {
+    font-size: 34px;
+    font-weight: 500;
+  }
+
+  section { margin-bottom: 64px; }
+  section h2 {
+    font-size: 24px;
+    font-weight: 500;
+    margin: 0 0 6px;
+  }
+  section p.section-note {
+    font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    margin: 0 0 26px;
+    max-width: 68ch;
+  }
+
+  .finding-block {
+    background: var(--risk-soft);
+    border-left: 4px solid var(--risk);
+    padding: 30px 34px;
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 36px;
+    align-items: center;
+  }
+  .finding-block .score-compare {
+    display: flex;
+    gap: 24px;
+  }
+  .score-compare .score-item { text-align: center; }
+  .score-compare .num {
+    font-size: 48px;
+    font-weight: 500;
+    line-height: 1;
+  }
+  .score-compare .on-time .num { color: var(--teal); }
+  .score-compare .late .num { color: var(--risk); }
+  .score-compare .sans {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+  .finding-block .arrow {
+    font-size: 28px;
+    color: var(--ink-soft);
+    align-self: center;
+  }
+  .finding-block .takeaway {
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .finding-block .takeaway .sans { display: block; font-size: 13px; color: var(--risk); margin-top: 10px; font-weight: 600; }
+
+  .chart-card {
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    padding: 26px 28px 12px;
+  }
+  .chart-card canvas { max-height: 320px; }
+
+  .two-col { display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; }
+
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 13.5px;
+  }
+  table.data-table th {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 2px solid var(--ink);
+    color: var(--ink-soft);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: none;
+  }
+  table.data-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  table.data-table tr:hover td { background: var(--teal-soft); }
+  .risk-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+  .risk-low { background: var(--teal-soft); color: var(--teal); }
+  .risk-high { background: var(--risk-soft); color: var(--risk); }
+
+  footer {
+    font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 860px) {
+    header.hero { grid-template-columns: 1fr; }
+    header.hero .context { text-align: left; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .finding-block { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div>
+      <h1>Where Olist's marketplace loses customers — and where it doesn't</h1>
+      <p class="lede">An analysis of 96,478 delivered orders across Brazil (2016–2018), built to answer one operational question: is late delivery actually costing us customer satisfaction, and where should logistics investment go first?</p>
+    </div>
+    <div class="context sans">
+      <strong>Olist Brazilian E-Commerce Dataset</strong>
+      Real, anonymized marketplace data · 99K orders · 3K sellers · SQL analysis via DuckDB
+    </div>
+  </header>
+
+  <div class="kpi-row sans" id="kpi-row"></div>
+
+  <section>
+    <h2>The core finding</h2>
+    <p class="section-note">Delivery timeliness isn't a minor operational detail — it's the single strongest driver of review score in this dataset.</p>
+    <div class="finding-block">
+      <div class="score-compare">
+        <div class="score-item on-time">
+          <div class="num">4.28</div>
+          <div class="sans">On-time orders<br>(88,644 orders)</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="score-item late">
+          <div class="num">2.55</div>
+          <div class="sans">Late orders<br>(7,826 orders)</div>
+        </div>
+      </div>
+      <div class="takeaway">
+        A late delivery drops the average review score by <strong>1.73 points</strong> — nearly two full stars — affecting roughly <strong>8.1%</strong> of all delivered orders in this dataset.
+        <span class="sans">Recommendation: prioritize carrier/logistics investment in the states with both high order volume and high average delivery time (see State Performance below) before optimizing anywhere else.</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Revenue & late-delivery rate over time</h2>
+    <p class="section-note">Revenue grew steadily month over month. Late-delivery rate is noisier — with a sharp spike around Nov 2017 and again in early 2018, both worth investigating against known logistics events (e.g. holiday volume, carrier disruptions).</p>
+    <div class="chart-card">
+      <canvas id="revenueTrendChart"></canvas>
+    </div>
+  </section>
+
+  <section>
+    <h2>Category risk: revenue vs. late-delivery rate</h2>
+    <p class="section-note">Categories in the upper right generate high revenue but also carry the highest late-delivery risk — these are the highest-value logistics-improvement targets.</p>
+    <div class="chart-card">
+      <canvas id="categoryScatterChart"></canvas>
+    </div>
+  </section>
+
+  <section>
+    <h2>State performance</h2>
+    <p class="section-note">Delivery time varies enormously by state — from 8.7 days in São Paulo (the hub) to over 24 days in more remote states — and review scores track this gap closely.</p>
+    <table class="data-table" id="stateTable"></table>
+  </section>
+
+  <div class="two-col">
+    <section>
+      <h2>Payment methods</h2>
+      <p class="section-note">Credit card dominates, with installment plans averaging 3.5 payments — common in the Brazilian market.</p>
+      <div class="chart-card">
+        <canvas id="paymentChart"></canvas>
+      </div>
+    </section>
+    <section>
+      <h2>Methodology</h2>
+      <p class="section-note" style="margin-bottom:0;">
+        All figures computed via SQL (DuckDB) directly against the raw Olist CSVs — no spreadsheet pre-aggregation.
+        Orders with status other than "delivered" are excluded from revenue and review figures. Months with fewer
+        than 100 orders (partial data at the start/end of the collection period) are excluded from trend charts.
+        "Late" is defined as delivered after the carrier's own estimated delivery date.
+      </p>
+    </section>
+  </div>
+
+  <footer>
+    Data: Brazilian E-Commerce Public Dataset by Olist (anonymized, real commercial data, 2016–2018) · Analysis: Elijah Chandler · Built with DuckDB (SQL) + Chart.js
+  </footer>
+
+</div>
+
+<script>
+const DATA = {"kpis": {"total_orders": 96478, "total_revenue": 15491111.16, "avg_order_item_value": 139.75, "avg_review_score": 4.07}, "monthly_revenue": [{"month": "2016-10", "revenue": 46490.66, "orders": 265}, {"month": "2017-01", "revenue": 127482.37, "orders": 750}, {"month": "2017-02", "revenue": 271239.32, "orders": 1653}, {"month": "2017-03", "revenue": 414330.95, "orders": 2546}, {"month": "2017-04", "revenue": 390812.4, "orders": 2303}, {"month": "2017-05", "revenue": 566851.4, "orders": 3546}, {"month": "2017-06", "revenue": 490050.37, "orders": 3135}, {"month": "2017-07", "revenue": 566299.08, "orders": 3872}, {"month": "2017-08", "revenue": 645832.36, "orders": 4193}, {"month": "2017-09", "revenue": 701077.49, "orders": 4150}, {"month": "2017-10", "revenue": 751117.01, "orders": 4478}, {"month": "2017-11", "revenue": 1153364.2, "orders": 7289}, {"month": "2017-12", "revenue": 843078.29, "orders": 5513}, {"month": "2018-01", "revenue": 1077887.46, "orders": 7069}, {"month": "2018-02", "revenue": 966168.41, "orders": 6555}, {"month": "2018-03", "revenue": 1120598.24, "orders": 7003}, {"month": "2018-04", "revenue": 1132878.93, "orders": 6798}, {"month": "2018-05", "revenue": 1128774.52, "orders": 6749}, {"month": "2018-06", "revenue": 1011978.29, "orders": 6099}, {"month": "2018-07", "revenue": 1027807.28, "orders": 6159}, {"month": "2018-08", "revenue": 985491.64, "orders": 6351}], "delivery_vs_reviews": [{"status": "Not Delivered", "avg_score": 4.5, "count": 8}, {"status": "On Time", "avg_score": 4.28, "count": 88644}, {"status": "Late", "avg_score": 2.55, "count": 7826}], "late_rate_trend": [{"month": "2016-09", "late_pct": 100.0}, {"month": "2016-10", "late_pct": 1.13}, {"month": "2016-12", "late_pct": 0.0}, {"month": "2017-01", "late_pct": 3.07}, {"month": "2017-02", "late_pct": 3.21}, {"month": "2017-03", "late_pct": 5.58}, {"month": "2017-04", "late_pct": 7.86}, {"month": "2017-05", "late_pct": 3.61}, {"month": "2017-06", "late_pct": 3.86}, {"month": "2017-07", "late_pct": 3.43}, {"month": "2017-08", "late_pct": 3.32}, {"month": "2017-09", "late_pct": 5.2}, {"month": "2017-10", "late_pct": 5.29}, {"month": "2017-11", "late_pct": 14.31}, {"month": "2017-12", "late_pct": 8.38}, {"month": "2018-01", "late_pct": 6.56}, {"month": "2018-02", "late_pct": 15.99}, {"month": "2018-03", "late_pct": 21.36}, {"month": "2018-04", "late_pct": 5.31}, {"month": "2018-05", "late_pct": 8.24}, {"month": "2018-06", "late_pct": 1.36}, {"month": "2018-07", "late_pct": 4.48}, {"month": "2018-08", "late_pct": 10.39}], "category_risk": [{"category": "health_beauty", "revenue": 1237538.95, "orders": 8647, "late_pct": 9.05, "avg_score": 4.18}, {"category": "watches_gifts", "revenue": 1167246.63, "orders": 5495, "late_pct": 8.28, "avg_score": 4.06}, {"category": "bed_bath_table", "revenue": 1037326.58, "orders": 9272, "late_pct": 8.4, "avg_score": 3.9}, {"category": "sports_leisure", "revenue": 960217.09, "orders": 7530, "late_pct": 7.37, "avg_score": 4.15}, {"category": "computers_accessories", "revenue": 896324.18, "orders": 6530, "late_pct": 7.74, "avg_score": 3.98}, {"category": "furniture_decor", "revenue": 718744.77, "orders": 6307, "late_pct": 8.37, "avg_score": 3.93}, {"category": "housewares", "revenue": 617836.73, "orders": 5743, "late_pct": 6.47, "avg_score": 4.1}, {"category": "cool_stuff", "revenue": 612071.86, "orders": 3559, "late_pct": 6.76, "avg_score": 4.18}, {"category": "auto", "revenue": 580263.44, "orders": 3810, "late_pct": 8.27, "avg_score": 4.09}, {"category": "toys", "revenue": 472109.78, "orders": 3804, "late_pct": 7.48, "avg_score": 4.19}, {"category": "garden_tools", "revenue": 471671.27, "orders": 3448, "late_pct": 7.99, "avg_score": 4.07}, {"category": "baby", "revenue": 400774.42, "orders": 2809, "late_pct": 8.76, "avg_score": 4.06}, {"category": "perfumery", "revenue": 391175.73, "orders": 3086, "late_pct": 7.33, "avg_score": 4.21}, {"category": "telephony", "revenue": 310004.11, "orders": 4093, "late_pct": 8.32, "avg_score": 3.99}, {"category": "office_furniture", "revenue": 269418.1, "orders": 1254, "late_pct": 8.94, "avg_score": 3.51}], "state_performance": [{"state": "SP", "revenue": 5798725.42, "orders": 40494, "avg_delivery_days": 8.7, "avg_score": 4.16}, {"state": "RJ", "revenue": 2063593.64, "orders": 12350, "avg_delivery_days": 15.1, "avg_score": 3.85}, {"state": "MG", "revenue": 1826486.53, "orders": 11354, "avg_delivery_days": 11.9, "avg_score": 4.11}, {"state": "RS", "revenue": 865783.6, "orders": 5344, "avg_delivery_days": 15.1, "avg_score": 4.09}, {"state": "PR", "revenue": 785095.06, "orders": 4923, "avg_delivery_days": 11.9, "avg_score": 4.13}, {"state": "SC", "revenue": 597067.83, "orders": 3546, "avg_delivery_days": 15.0, "avg_score": 4.03}, {"state": "BA", "revenue": 593873.48, "orders": 3256, "avg_delivery_days": 19.2, "avg_score": 3.84}, {"state": "DF", "revenue": 348601.41, "orders": 2080, "avg_delivery_days": 12.9, "avg_score": 4.04}, {"state": "GO", "revenue": 337665.51, "orders": 1957, "avg_delivery_days": 15.3, "avg_score": 4.0}, {"state": "ES", "revenue": 318466.51, "orders": 1995, "avg_delivery_days": 15.6, "avg_score": 3.98}, {"state": "PE", "revenue": 310464.23, "orders": 1593, "avg_delivery_days": 18.2, "avg_score": 4.0}, {"state": "CE", "revenue": 267267.58, "orders": 1279, "avg_delivery_days": 20.9, "avg_score": 3.86}, {"state": "PA", "revenue": 212705.86, "orders": 946, "avg_delivery_days": 23.7, "avg_score": 3.81}, {"state": "MT", "revenue": 181579.03, "orders": 886, "avg_delivery_days": 17.9, "avg_score": 3.99}, {"state": "MA", "revenue": 148141.69, "orders": 717, "avg_delivery_days": 21.5, "avg_score": 3.75}, {"state": "PB", "revenue": 137953.28, "orders": 517, "avg_delivery_days": 20.5, "avg_score": 4.03}, {"state": "MS", "revenue": 136005.96, "orders": 701, "avg_delivery_days": 15.5, "avg_score": 4.07}, {"state": "PI", "revenue": 105259.41, "orders": 476, "avg_delivery_days": 19.3, "avg_score": 3.95}, {"state": "RN", "revenue": 100833.26, "orders": 474, "avg_delivery_days": 19.3, "avg_score": 4.1}, {"state": "AL", "revenue": 94475.18, "orders": 397, "avg_delivery_days": 24.4, "avg_score": 3.8}, {"state": "SE", "revenue": 70289.13, "orders": 335, "avg_delivery_days": 21.4, "avg_score": 3.88}, {"state": "TO", "revenue": 60007.37, "orders": 274, "avg_delivery_days": 17.4, "avg_score": 4.16}, {"state": "RO", "revenue": 56966.0, "orders": 243, "avg_delivery_days": 19.7, "avg_score": 4.08}, {"state": "AM", "revenue": 27668.61, "orders": 145, "avg_delivery_days": 26.3, "avg_score": 4.09}, {"state": "AC", "revenue": 19575.33, "orders": 80, "avg_delivery_days": 20.7, "avg_score": 4.13}, {"state": "AP", "revenue": 16141.81, "orders": 67, "avg_delivery_days": 28.2, "avg_score": 4.25}], "payment_breakdown": [{"type": "credit_card", "count": 76795, "avg_installments": 3.5, "total_value": 12542084.19}, {"type": "boleto", "count": 19784, "avg_installments": 1.0, "total_value": 2869361.27}, {"type": "voucher", "count": 5775, "avg_installments": 1.0, "total_value": 379436.87}, {"type": "debit_card", "count": 1529, "avg_installments": 1.0, "total_value": 217989.79}]};
+
+// ---- KPI cards ----
+const kpiRow = document.getElementById('kpi-row');
+const kpis = [
+  { label: 'Delivered Orders', value: DATA.kpis.total_orders.toLocaleString() },
+  { label: 'Total Revenue', value: '$' + Math.round(DATA.kpis.total_revenue).toLocaleString() },
+  { label: 'Avg. Order Item Value', value: '$' + DATA.kpis.avg_order_item_value.toFixed(2) },
+  { label: 'Avg. Review Score', value: DATA.kpis.avg_review_score.toFixed(2) + ' / 5' },
+];
+kpiRow.innerHTML = kpis.map(k => `
+  <div class="kpi">
+    <div class="label">${k.label}</div>
+    <div class="value">${k.value}</div>
+  </div>
+`).join('');
+
+const inkSoft = '#48584F';
+const teal = '#1F6F5C';
+const risk = '#A6402F';
+const gold = '#C08A2E';
+Chart.defaults.font.family = "-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif";
+Chart.defaults.color = inkSoft;
+
+// ---- Revenue + late-rate trend (dual axis) ----
+const monthLabels = DATA.monthly_revenue.map(m => m.month);
+const revenueValues = DATA.monthly_revenue.map(m => m.revenue);
+const lateRateMap = Object.fromEntries(DATA.late_rate_trend.map(l => [l.month, l.late_pct]));
+const lateValues = monthLabels.map(m => lateRateMap[m] ?? null);
+
+new Chart(document.getElementById('revenueTrendChart'), {
+  data: {
+    labels: monthLabels,
+    datasets: [
+      {
+        type: 'bar',
+        label: 'Monthly Revenue ($)',
+        data: revenueValues,
+        backgroundColor: teal + 'CC',
+        yAxisID: 'y',
+        order: 2,
+      },
+      {
+        type: 'line',
+        label: 'Late Delivery Rate (%)',
+        data: lateValues,
+        borderColor: risk,
+        backgroundColor: risk,
+        yAxisID: 'y1',
+        tension: 0.25,
+        pointRadius: 3,
+        order: 1,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    scales: {
+      y: { position: 'left', title: { display: true, text: 'Revenue ($)' }, grid: { color: '#EAE7DE' } },
+      y1: { position: 'right', title: { display: true, text: 'Late Rate (%)' }, grid: { display: false } },
+    },
+    plugins: { legend: { position: 'bottom' } }
+  }
+});
+
+// ---- Category risk scatter ----
+new Chart(document.getElementById('categoryScatterChart'), {
+  type: 'scatter',
+  data: {
+    datasets: [{
+      label: 'Product Category',
+      data: DATA.category_risk.map(c => ({ x: c.revenue, y: c.late_pct, label: c.category })),
+      backgroundColor: gold + 'CC',
+      pointRadius: 7,
+      pointHoverRadius: 9,
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      x: { title: { display: true, text: 'Revenue ($)' }, grid: { color: '#EAE7DE' } },
+      y: { title: { display: true, text: 'Late Delivery Rate (%)' }, grid: { color: '#EAE7DE' } },
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => `${ctx.raw.label}: $${Math.round(ctx.raw.x).toLocaleString()}, ${ctx.raw.y}% late`
+        }
+      }
+    }
+  }
+});
+
+// ---- State table ----
+const stateTable = document.getElementById('stateTable');
+const topStates = DATA.state_performance.slice(0, 10);
+stateTable.innerHTML = `
+  <tr>
+    <th>State</th><th>Revenue</th><th>Orders</th><th>Avg. Delivery (days)</th><th>Avg. Review</th><th>Risk</th>
+  </tr>
+  ${topStates.map(s => `
+    <tr>
+      <td><strong>${s.state}</strong></td>
+      <td>$${Math.round(s.revenue).toLocaleString()}</td>
+      <td>${s.orders.toLocaleString()}</td>
+      <td>${s.avg_delivery_days}</td>
+      <td>${s.avg_score}</td>
+      <td><span class="risk-tag ${s.avg_delivery_days > 14 ? 'risk-high' : 'risk-low'}">${s.avg_delivery_days > 14 ? 'High Delivery Time' : 'Healthy'}</span></td>
+    </tr>
+  `).join('')}
+`;
+
+// ---- Payment chart ----
+new Chart(document.getElementById('paymentChart'), {
+  type: 'doughnut',
+  data: {
+    labels: DATA.payment_breakdown.map(p => p.type.replace('_', ' ')),
+    datasets: [{
+      data: DATA.payment_breakdown.map(p => p.total_value),
+      backgroundColor: [teal, gold, risk, '#8A9A93'],
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'bottom' } }
+  }
+});
+</script>
+</body>
+</html>
