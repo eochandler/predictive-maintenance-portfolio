@@ -341,7 +341,7 @@ window.Quarto = {
 <p>The original version of this project used simulated failure probabilities (<code>np.random.beta(...)</code>) to demonstrate the cost-threshold framework. This version consumes <strong>real predictions from the NASA RUL model</strong>, connecting the two projects into a single pipeline: classifier output feeds directly into the business decision layer, rather than two independent demos sharing a theme. See <a href="../projects/methodology.html">Methodology &amp; Limitations</a> for how <code>failure_probability</code> is derived from <code>predicted_RUL</code>.</p>
 </div>
 </div>
-<div id="acaee4d3" class="cell" data-execution_count="1">
+<div id="18d6da9b" class="cell" data-execution_count="1">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -428,7 +428,7 @@ Figure&nbsp;1: Operational cost as a function of classification threshold, using
 </section>
 <section id="standard-vs.-cost-optimized-strategy-comparison" class="level2">
 <h2 class="anchored" data-anchor-id="standard-vs.-cost-optimized-strategy-comparison">5. Standard vs.&nbsp;Cost-Optimized Strategy Comparison</h2>
-<div id="5cd9ead4" class="cell" data-execution_count="3">
+<div id="9c307253" class="cell" data-execution_count="3">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare default (0.50) vs optimal threshold metrics</span></span>

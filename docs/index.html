@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Predictive Maintenance &amp; Reliability Engineering Portfolio</title>
+<title>Applied Data Science &amp; Analytics Portfolio – Predictive Maintenance &amp; Reliability Engineering Portfolio</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -74,35 +74,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -180,9 +151,12 @@ window.Quarto = {
    
   <ul>
   <li><a href="#executive-summary" id="toc-executive-summary" class="nav-link active" data-scroll-target="#executive-summary">Executive Summary</a></li>
-  <li><a href="#featured-projects" id="toc-featured-projects" class="nav-link" data-scroll-target="#featured-projects">Featured Projects</a></li>
+  <li><a href="#featured-projects" id="toc-featured-projects" class="nav-link" data-scroll-target="#featured-projects">Featured Projects</a>
+  <ul class="collapse">
+  <li><a href="#predictive-maintenance" id="toc-predictive-maintenance" class="nav-link" data-scroll-target="#predictive-maintenance">Predictive Maintenance</a></li>
+  <li><a href="#business-analytics" id="toc-business-analytics" class="nav-link" data-scroll-target="#business-analytics">Business Analytics</a></li>
+  </ul></li>
   <li><a href="#technical-skills-architecture" id="toc-technical-skills-architecture" class="nav-link" data-scroll-target="#technical-skills-architecture">Technical Skills &amp; Architecture</a></li>
-  <li><a href="#technical-skills-architecture-1" id="toc-technical-skills-architecture-1" class="nav-link" data-scroll-target="#technical-skills-architecture-1">Technical Skills &amp; Architecture</a></li>
   </ul>
 </nav>
     </div>
@@ -191,8 +165,8 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Predictive Maintenance &amp; Reliability Engineering Portfolio</h1>
-<p class="subtitle lead">End-to-End Machine Learning, Telemetry Monitoring &amp; Financial Decision Systems</p>
+<h1 class="title">Applied Data Science &amp; Analytics Portfolio</h1>
+<p class="subtitle lead">Predictive Maintenance, Business Intelligence &amp; Experimentation</p>
 </div>
 
 
@@ -211,18 +185,26 @@ window.Quarto = {
 
 <section id="executive-summary" class="level2">
 <h2 class="anchored" data-anchor-id="executive-summary">Executive Summary</h2>
-<p>Welcome to my portfolio! I build end-to-end data science solutions specializing in <strong>predictive maintenance</strong>, <strong>real-time operational telemetry</strong>, and <strong>cost-optimization frameworks</strong>.</p>
-<p>This portfolio demonstrates a complete industrial data science lifecycle across three core projects:</p>
+<p>Welcome to my portfolio! I build end-to-end data science solutions across two areas: <strong>industrial predictive maintenance</strong> (failure forecasting, real-time telemetry monitoring, and cost-optimized maintenance decisions) and <strong>general business analytics</strong> (SQL-driven BI dashboards, customer churn modeling, and rigorous A/B testing).</p>
+<p>This portfolio demonstrates a complete analytics lifecycle across six projects:</p>
+<p><strong>Predictive Maintenance</strong></p>
 <ol type="1">
 <li><strong>Failure Prediction (ML Pipeline):</strong> Forecasting Remaining Useful Life (RUL) from multi-sensor time-series telemetry, validated on a held-out test set.</li>
 <li><strong>Operational Telemetry (Streaming UI):</strong> Building real-time interactive dashboards with dynamic anomaly alerting.</li>
-<li><strong>Business Impact (Decision Engine):</strong> Translating real model predictions into optimal financial policies that minimize total operational expenditure (<span class="math inline">\(OPEX\)</span>).</li>
+<li><strong>Business Impact (Decision Engine):</strong> Translating real model predictions into optimal financial policies that minimize total operational expenditure (OPEX).</li>
 </ol>
-<p>See the <a href="./projects/methodology.html">Methodology &amp; Limitations</a> page for how these projects connect and where their current constraints are.</p>
-<hr>
+<p><strong>Business Analytics</strong></p>
+<ol start="4" type="1">
+<li><strong>Marketplace BI Dashboard:</strong> Answering a real stakeholder question with SQL, run directly against 96K e-commerce orders — where is the business losing revenue and customer satisfaction in the delivery pipeline.</li>
+<li><strong>Customer Churn Prediction:</strong> Comparing model architectures and building a per-customer cost-optimized retention threshold, saving $283K over a do-nothing baseline on 7,043 real customers.</li>
+<li><strong>A/B Testing &amp; Experimentation:</strong> A full-rigor hypothesis test on 294K real users — data contamination handling, sample-ratio-mismatch checks, confidence intervals, and statistical power analysis.</li>
+</ol>
+<p>See the <a href="https://eochandler.github.io/predictive-maintenance-portfolio/projects/methodology.html">Methodology &amp; Limitations</a> page for how the predictive maintenance projects connect and where their current constraints are.</p>
 </section>
 <section id="featured-projects" class="level2">
 <h2 class="anchored" data-anchor-id="featured-projects">Featured Projects</h2>
+<section id="predictive-maintenance" class="level3">
+<h3 class="anchored" data-anchor-id="predictive-maintenance">Predictive Maintenance</h3>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -251,19 +233,34 @@ window.Quarto = {
 <td>Python, Cost Matrix Tuning, Scikit-learn</td>
 <td>Formulated a decision engine that tunes model classification thresholds — using real predictions from Project 1 — to minimize total operational costs vs.&nbsp;run-to-failure baseline policies.</td>
 </tr>
-<tr class="even">
+</tbody>
+</table>
+</section>
+<section id="business-analytics" class="level3">
+<h3 class="anchored" data-anchor-id="business-analytics">Business Analytics</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Project</th>
+<th>Domain</th>
+<th>Key Technologies</th>
+<th>Core Deliverable &amp; Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
 <td><strong><a href="./projects/olist-dashboard.html">4. Olist Marketplace BI Dashboard</a></strong></td>
 <td>Business Intelligence</td>
 <td>SQL (DuckDB), Chart.js, HTML</td>
 <td>Answered a stakeholder question — where is the marketplace losing revenue and satisfaction in the delivery pipeline — using SQL run directly against 96K real orders. Found that late delivery drops review scores by 1.73 points.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><strong><a href="./projects/churn-prediction.html">5. Telco Customer Churn Prediction</a></strong></td>
 <td>Business Analytics</td>
 <td>scikit-learn, KMeans, Chart.js</td>
 <td>Compared two models and built a per-customer cost-optimized retention threshold — saving $283K vs.&nbsp;no program and $73K vs.&nbsp;a naive 0.50 cutoff on a 7,043-customer dataset.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><strong><a href="./projects/ab-testing.html">6. E-Commerce A/B Test Analysis</a></strong></td>
 <td>Experimentation</td>
 <td>SciPy, statsmodels, Chart.js</td>
@@ -271,13 +268,10 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<hr>
+</section>
 </section>
 <section id="technical-skills-architecture" class="level2">
 <h2 class="anchored" data-anchor-id="technical-skills-architecture">Technical Skills &amp; Architecture</h2>
-</section>
-<section id="technical-skills-architecture-1" class="level2">
-<h2 class="anchored" data-anchor-id="technical-skills-architecture-1">Technical Skills &amp; Architecture</h2>
 <ul>
 <li><strong>Languages &amp; Core Tooling:</strong> Python (Pandas, NumPy, Scikit-learn), SQL (DuckDB), Quarto, Git, Markdown</li>
 <li><strong>Machine Learning &amp; Analytics:</strong> Feature Engineering, Survival Modeling, LightGBM, Cost-Sensitive Learning, Classification Threshold Optimization, Held-Out Validation, Customer Segmentation (KMeans), Logistic Regression / Random Forest Comparison</li>

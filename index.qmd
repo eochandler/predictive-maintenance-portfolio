@@ -1,39 +1,48 @@
 ---
-title: "Predictive Maintenance & Reliability Engineering Portfolio"
-subtitle: "End-to-End Machine Learning, Telemetry Monitoring & Financial Decision Systems"
+title: "Applied Data Science & Analytics Portfolio"
+subtitle: "Predictive Maintenance, Business Intelligence & Experimentation"
 toc: true
 ---
 
 ## Executive Summary
 
-Welcome to my portfolio! I build end-to-end data science solutions specializing in **predictive maintenance**, **real-time operational telemetry**, and **cost-optimization frameworks**. 
+Welcome to my portfolio! I build end-to-end data science solutions across two areas: **industrial predictive maintenance** (failure forecasting, real-time telemetry monitoring, and cost-optimized maintenance decisions) and **general business analytics** (SQL-driven BI dashboards, customer churn modeling, and rigorous A/B testing).
 
-This portfolio demonstrates a complete industrial data science lifecycle across three core projects:
+This portfolio demonstrates a complete analytics lifecycle across six projects:
+
+**Predictive Maintenance**
 
 1. **Failure Prediction (ML Pipeline):** Forecasting Remaining Useful Life (RUL) from multi-sensor time-series telemetry, validated on a held-out test set.
 2. **Operational Telemetry (Streaming UI):** Building real-time interactive dashboards with dynamic anomaly alerting.
-3. **Business Impact (Decision Engine):** Translating real model predictions into optimal financial policies that minimize total operational expenditure ($OPEX$).
+3. **Business Impact (Decision Engine):** Translating real model predictions into optimal financial policies that minimize total operational expenditure (OPEX).
 
-See the [Methodology & Limitations](projects/methodology.qmd) page for how these projects connect and where their current constraints are.
+**Business Analytics**
 
----
+4. **Marketplace BI Dashboard:** Answering a real stakeholder question with SQL, run directly against 96K e-commerce orders — where is the business losing revenue and customer satisfaction in the delivery pipeline.
+5. **Customer Churn Prediction:** Comparing model architectures and building a per-customer cost-optimized retention threshold, saving $283K over a do-nothing baseline on 7,043 real customers.
+6. **A/B Testing & Experimentation:** A full-rigor hypothesis test on 294K real users — data contamination handling, sample-ratio-mismatch checks, confidence intervals, and statistical power analysis.
+
+See the [Methodology & Limitations](https://eochandler.github.io/predictive-maintenance-portfolio/projects/methodology.html) page for how the predictive maintenance projects connect and where their current constraints are.
 
 ## Featured Projects
+
+### Predictive Maintenance
 
 | Project | Domain | Key Technologies | Core Deliverable & Summary |
 |---|---|---|---|
 | **[1. NASA Turbofan RUL Forecast](projects/nasa-rul.qmd)** | Predictive Maintenance | Python, LightGBM, Pandas, Seaborn | Built a machine learning pipeline using rolling sensor features to forecast engine failure cycles on NASA C-MAPSS telemetry data, validated on the official held-out test set. |
 | **[2. IoT Sensor Anomaly Dashboard](projects/pdm-dashboard.qmd)** | Real-Time Telemetry | Streamlit, Plotly, IoT Data Simulation | Developed a live streaming dashboard with dynamic safety-threshold alerting. Includes a **[Live Web App Demo](https://predictive-maintenance-portfolio-3etasqtc25xfvszhkcjr3h.streamlit.app/){target="_blank"}**. |
 | **[3. Maintenance Cost & ROI Model](projects/maintenance-roi.qmd)** | Financial Optimization | Python, Cost Matrix Tuning, Scikit-learn | Formulated a decision engine that tunes model classification thresholds — using real predictions from Project 1 — to minimize total operational costs vs. run-to-failure baseline policies. |
+
+### Business Analytics
+
+| Project | Domain | Key Technologies | Core Deliverable & Summary |
+|---|---|---|---|
 | **[4. Olist Marketplace BI Dashboard](projects/olist-dashboard.qmd)** | Business Intelligence | SQL (DuckDB), Chart.js, HTML | Answered a stakeholder question — where is the marketplace losing revenue and satisfaction in the delivery pipeline — using SQL run directly against 96K real orders. Found that late delivery drops review scores by 1.73 points. |
 | **[5. Telco Customer Churn Prediction](projects/churn-prediction.qmd)** | Business Analytics | scikit-learn, KMeans, Chart.js | Compared two models and built a per-customer cost-optimized retention threshold — saving $283K vs. no program and $73K vs. a naive 0.50 cutoff on a 7,043-customer dataset. |
 | **[6. E-Commerce A/B Test Analysis](projects/ab-testing.qmd)** | Experimentation | SciPy, statsmodels, Chart.js | Ran a full-rigor A/B test analysis on 294K real users — data contamination handling, sample-ratio-mismatch check, confidence intervals, and a power analysis. Verdict: do not ship the tested page. |
----
 
 ## Technical Skills & Architecture
-
-## Technical Skills & Architecture
-
 
 * **Languages & Core Tooling:** Python (Pandas, NumPy, Scikit-learn), SQL (DuckDB), Quarto, Git, Markdown
 * **Machine Learning & Analytics:** Feature Engineering, Survival Modeling, LightGBM, Cost-Sensitive Learning, Classification Threshold Optimization, Held-Out Validation, Customer Segmentation (KMeans), Logistic Regression / Random Forest Comparison
