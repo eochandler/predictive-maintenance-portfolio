@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "Predictive Maintenance & Reliability Engineering Portfolio"
+  title: "Applied Data Science & Analytics Portfolio"
   navbar:
     left:
       - text: "Home"

@@ -9,12 +9,12 @@ format:
 
 ::: {.callout-important}
 ## Executive Summary
-An e-commerce company built a new landing page to increase conversions and ran an A/B test on 294,478 users. This project answers the real business question — ship it, keep the current page, or test longer — with the full statistical rigor that most A/B-test tutorials skip: data contamination handling, a sample-ratio-mismatch check, a confidence interval, and a power analysis distinguishing "no effect" from "not enough data."
+An e-commerce company built a new landing page to increase conversions and ran an A/B test on 294,478 users. This project answers the real business question: ship it, keep the current page, or test longer. With the full statistical rigor. This project covers data contamination handling, a sample-ratio-mismatch check, a confidence interval, and a power analysis distinguishing "no effect" from "not enough data."
 :::
 
 ## The Verdict
 
-**Do not ship the new page.** The difference in conversion rate is not statistically significant (p = 0.905), and the 95% confidence interval for the difference spans zero. A power analysis confirms this null result is trustworthy — the test could reliably detect an effect as small as 0.35 percentage points, and the observed effect falls within the range it could not distinguish from noise.
+**Do not ship the new page.** The difference in conversion rate is not statistically significant (p = 0.905), and the 95% confidence interval for the difference spans zero. A power analysis confirms this null result is trustworthy. The test can reliably detect an effect as small as 0.35 percentage points, and the observed effect falls within the range it could not distinguish from noise.
 
 | Metric | Control (Old Page) | Treatment (New Page) |
 |:---|:---:|:---:|
@@ -37,4 +37,4 @@ An e-commerce company built a new landing page to increase conversions and ran a
 
 ## Why This Project
 
-Most A/B testing portfolio projects stop at "the p-value was above/below 0.05." This one demonstrates the parts that separate a rigorous analyst from a p-value lookup: catching real data contamination before trusting a result, verifying randomization health via an SRM check, and correctly interpreting a null result by checking whether the test was even powered to detect a meaningful effect in the first place.
+Traditional A/B testing portfolio projects stop at "the p-value was above/below 0.05." This one demonstrates the parts that separate a rigorous analyst from a p-value lookup. Catching real data contamination before trusting a result, verifyies randomization health via an SRM check, and correctly interpreting a null result by checking whether the test was even powered to detect a meaningful effect in the first place.

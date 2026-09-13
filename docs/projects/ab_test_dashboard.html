@@ -130,7 +130,7 @@
   <header class="hero">
     <div class="tag">HYPOTHESIS TEST · TWO-PROPORTION Z-TEST</div>
     <h1>Should this company ship the new landing page?</h1>
-    <p class="lede">An e-commerce company built a new landing page to increase conversions and ran an A/B test on 294,478 users. This analysis walks through the full rigor required to trust the answer — not just "did the number go up."</p>
+    <p class="lede">An e-commerce company built a new landing page to increase conversions and ran an A/B test on 294,478 users. This analysis walks through the full rigor required to trust the answer. This tests beyond "did the number just go up"</p>
   </header>
 
   <div class="verdict-banner">
@@ -145,13 +145,13 @@
 
   <section>
     <h2>Step 1 — Data quality, before trusting anything</h2>
-    <p class="section-note">1.32% of users were logged with a mismatched group/page assignment (e.g. a "control" user who somehow saw the new page) — these can't be attributed to either version and must be excluded before any test is valid.</p>
+    <p class="section-note">1.32% of users were logged with a mismatched group/page assignment (e.g. a "control" user who somehow saw the new page) These can't be attributed to either version and must be excluded before any test is valid.</p>
     <ul class="checklist" id="quality-checklist"></ul>
   </section>
 
   <section>
     <h2>Step 2 — Sample Ratio Mismatch (SRM) check</h2>
-    <p class="section-note">Before trusting a conversion-rate comparison, verify the randomization itself worked — that users were actually split ~50/50 as intended. A failed SRM check invalidates a test regardless of what the conversion numbers say.</p>
+    <p class="section-note">Before trusting a conversion-rate comparison, verify the randomization itself worked by checking that users were actually split ~50/50 as intended. A failed SRM check invalidates a test regardless of what the conversion numbers say.</p>
     <div class="chart-card">
       <canvas id="srmChart"></canvas>
     </div>
@@ -159,7 +159,7 @@
 
   <section>
     <h2>Step 3 — The main result</h2>
-    <p class="section-note">Control (old page) converted at 12.04%; treatment (new page) converted at 11.88% — a difference of -0.16 percentage points, with a 95% confidence interval that spans zero.</p>
+    <p class="section-note">Control (old page) converted at 12.04% treatment (new page) converted at 11.88%. a difference of -0.16 percentage points, with a 95% confidence interval that spans zero.</p>
     <div class="chart-card">
       <canvas id="ciChart"></canvas>
     </div>
@@ -168,12 +168,12 @@
   <div class="two-col">
     <section>
       <h2>Step 4 — Was this test even powered enough?</h2>
-      <p class="section-note" style="margin-bottom: 14px;">A null result can mean "truly no effect" or "not enough data to detect a real one." With 290K+ users, this test could reliably detect an effect as small as <strong>0.35 percentage points</strong> — smaller than that, and the test is simply underpowered, not evidence of "no effect."</p>
-      <p class="section-note" style="margin-bottom:0;">The observed effect (-0.16pp) falls well within the range this test <em>could not</em> reliably distinguish from zero — so "not significant" here is a genuinely trustworthy null, not an underpowered guess.</p>
+      <p class="section-note" style="margin-bottom: 14px;">A null result can mean "truly no effect" or "not enough data to detect a real one." With 290K+ users, this test could reliably detect an effect as small as <strong>0.35 percentage points</strong> Any smaller than that, and the test is underpowered, not evidence of "no effect."</p>
+      <p class="section-note" style="margin-bottom:0;">The observed effect (-0.16pp) falls well within the range this test <em>could not</em> reliably distinguish from zero. So "not significant" here is a trustworthy null.</p>
     </section>
     <section>
       <h2>Step 5 — Daily trend (novelty effect check)</h2>
-      <p class="section-note">No meaningful upward or downward drift over the 23-day test window in either group — ruling out a "novelty effect" that fades over time as an explanation either way.</p>
+      <p class="section-note">There is no meaningful upward or downward drift over the 23-day test window in either group, this rules out a "novelty effect" that fades over time.</p>
       <div class="chart-card">
         <canvas id="trendChart"></canvas>
       </div>
@@ -183,7 +183,7 @@
   <section>
     <h2>Business recommendation</h2>
     <p class="section-note" style="margin-bottom:0;">
-      Keep the current page. Shipping the new page would very likely (based on this data) not improve conversion, and directionally leans slightly negative. If the business believes a smaller effect (under 0.35pp) could still be commercially meaningful, the correct next step is <strong>not</strong> to re-run this same test — it's to run a longer test with more traffic, since this sample size cannot resolve an effect that small either way.
+      Keep the current page. Shipping the new page would very likely not improve conversion, and directionally leans slightly negative. If the business believes a smaller effect (under 0.35pp) could still be commercially meaningful, the next step is <strong>not</strong> to re-run this same test. Run a longer test with more traffic, since this sample size cannot resolve an effect that small either way.
     </p>
   </section>
 
