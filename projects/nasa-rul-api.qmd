@@ -5,6 +5,8 @@ subtitle: "Deploying the turbofan prediction workflow with Docker and MLflow"
 
 ::: {.callout-note appearance="simple"}
 **Live API documentation:** [Explore the deployed Turbofan RUL API](https://elijah-chandler-portfolio.onrender.com/docs){target="_blank"}.
+
+The Render site may take up to a minute to load on your first visit while the service wakes up.
 :::
 
 ## Project Overview
