@@ -1,0 +1,36 @@
+---
+title: "Containerized NASA Turbofan RUL API"
+subtitle: "Deploying the turbofan prediction workflow with Docker and MLflow"
+---
+
+::: {.callout-note appearance="simple"}
+**Live API documentation:** [Explore the deployed Turbofan RUL API](https://elijah-chandler-portfolio.onrender.com/docs){target="_blank"}.
+:::
+
+## Project Overview
+
+The [NASA Turbofan RUL Forecast](nasa-rul.qmd) project develops a model to estimate the remaining useful life (RUL) of an engine from its sensor history. This companion project focuses on taking that predictive-maintenance workflow beyond offline analysis: it packages the model-serving workflow with Docker and MLflow and makes predictions available through a live HTTP API.
+
+The service is deployed on Render. Its interactive OpenAPI documentation lets visitors inspect the request and response formats and try the available endpoints.
+
+## How It Works
+
+1. A client sends an engine identifier (optional) and one or more cycle records containing a cycle number and sensor readings.
+2. The API uses the supplied history to produce a predicted RUL, an alert indicator, and the model version used.
+3. The caller can use the prediction and alert in a downstream maintenance workflow.
+
+## API Endpoints
+
+| Endpoint | Purpose |
+|---|---|
+| `GET /health` | Check that the service is responding. |
+| `GET /model-info` | Retrieve information about the model served by the API. |
+| `POST /predict` | Submit engine cycle data and receive a predicted RUL, alert status, and model version. |
+
+The prediction endpoint validates incoming requests and documents validation errors, making the API contract visible and testable through the interactive API docs.
+
+## What This Demonstrates
+
+This deployment complements the model-development notebook with practical machine-learning engineering: packaging an inference service in a container, managing the model workflow with MLflow, defining a documented API contract, and deploying the service for remote access. It shows how an offline RUL model can be exposed as an integration point for applications and maintenance systems.
+
+**Try it:** [Open the live API documentation](https://elijah-chandler-portfolio.onrender.com/docs){target="_blank"}.
